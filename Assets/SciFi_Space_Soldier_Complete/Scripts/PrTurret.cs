@@ -82,6 +82,8 @@ public class PrTurret : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
+        weapon = GameObject.FindGameObjectWithTag("Test");
         playerGO = new List<GameObject>();
         //enemiesGO = new List<GameObject>();
 
