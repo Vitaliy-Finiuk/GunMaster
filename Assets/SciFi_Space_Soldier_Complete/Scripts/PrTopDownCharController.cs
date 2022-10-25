@@ -2,6 +2,8 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using SimpleInputNamespace;
+
 //using PrUtils;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -86,6 +88,9 @@ public class PrTopDownCharController : MonoBehaviour {
     private GameObject JoystickTarget;
     private GameObject JoystickLookRot;
 
+    [Header("Mobile Joysctick")]
+    [SerializeField] private Joystick _joystick;
+    
     [Header("VFX")]
     public GameObject RollVFX;
 
@@ -343,8 +348,8 @@ public class PrTopDownCharController : MonoBehaviour {
                 crouch = false;
             }	
 
-            float h = Input.GetAxis(playerCtrlMap[0]);
-            float v = Input.GetAxis(playerCtrlMap[1]);
+            float h = _joystick.xAxis.value;
+            float v =  _joystick.yAxis.value;
 
             if (crouch && Inventory.Aiming)
             {

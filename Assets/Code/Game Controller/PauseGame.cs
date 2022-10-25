@@ -11,7 +11,7 @@ public class PauseGame : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetButtonDown("Roll"))
+		if (Input.GetButtonDown("Use"))
 			TogglePause();
 	}
 
