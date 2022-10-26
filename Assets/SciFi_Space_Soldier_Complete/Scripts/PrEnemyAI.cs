@@ -98,7 +98,6 @@ public class PrEnemyAI : MonoBehaviour
     public bool lookForPlayer = false;
 
     [Header("Waypoints Settings")]
-    public PrWaypointsRoute waypointRoute;
     private int actualWaypoint = 0;
     [HideInInspector]
     public Transform[] waypoints;
@@ -206,7 +205,6 @@ public class PrEnemyAI : MonoBehaviour
             DebugText.GetComponent<Renderer>().enabled = false;
 
         //Create Waypoints Array
-        SetWaypoints();
 
         //Ass
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -329,27 +327,7 @@ public class PrEnemyAI : MonoBehaviour
 
     }
 
-    public void SetWaypoints()
-    {
-        if (waypointRoute)
-        {
-            waypoints = new Transform[waypointRoute.waypoints.Length];
-            timeToWait = waypointRoute.timeToWait;
 
-            for (int i = 0; i < (waypoints.Length); i++)
-            {
-                waypoints[i] = waypointRoute.waypoints[i];
-
-            }
-        }
-        else
-        {
-            if (actualState == AIState.Patrol)
-            {
-                actualState = AIState.FriendlyFollow;
-            }
-        }
-    }
 
     public void StopAllActivities()
     {

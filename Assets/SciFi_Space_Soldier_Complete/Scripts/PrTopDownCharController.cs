@@ -14,7 +14,6 @@ public class PrTopDownCharController : MonoBehaviour {
 
     [Header("Multiplayer")]
     public int playerNmb = 1;
-    public PrPlayerSettings playerSettings;
     public Renderer playerSelection;
     //Inputs
     [HideInInspector]
@@ -133,17 +132,6 @@ public class PrTopDownCharController : MonoBehaviour {
         m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
-        SetMultiplayerSettings();
-
-        if (playerSettings)
-        {
-            playerCtrlMap = PrUtils.SetMultiplayerInputs(playerNmb, playerSettings, playerCtrlMap);
-
-            if (playerNmb > 1)
-            {
-                JoystickEnabled = true;
-            }
-        }
 
 
         if (JoystickEnabled)
@@ -180,107 +168,13 @@ public class PrTopDownCharController : MonoBehaviour {
         }
     }
 
-    public void LoadPlayerInfo()
-    {
-        Debug.Log("player Info found - Loading Info");
 
-        JoystickEnabled = PrPlayerInfo.player1.usingJoystick;
-        Inventory.Health = PrPlayerInfo.player1.health;
-        Inventory.ActualHealth = PrPlayerInfo.player1.actualHealth;
-        for (int i = 0; i < PrPlayerInfo.player1.weapons.Length; i++)
-        {
-            Inventory.InitialWeapons[i] = Inventory.WeaponListObject.weapons[PrPlayerInfo.player1.weapons[i]].GetComponent<PrWeapon>();
-            Inventory.grenadesCount = PrPlayerInfo.player1.grenades;
-        }
-    }
 
-    public void SavePlayerInfo()
-    {
-        Debug.Log("Saving Player Info");
-
-        PrPlayerInfo playerI = PrPlayerInfo.player1.GetComponent<PrPlayerInfo>();
-        playerI.playerNumber = playerNmb;
-        playerI.usingJoystick = JoystickEnabled;
-        playerI.playerName = Inventory.name;
-        playerI.health = Inventory.Health;
-        playerI.actualHealth = Inventory.ActualHealth;
-        playerI.maxWeaponCount = Inventory.playerWeaponLimit;
-        playerI.weapons = new int[Inventory.playerWeaponLimit];
-        playerI.weaponsAmmo = new int[Inventory.playerWeaponLimit];
-        playerI.weaponsClips = new int[Inventory.playerWeaponLimit];
-        playerI.grenades = Inventory.grenadesCount;
-
-        for (int i = 0; i < Inventory.playerWeaponLimit; i++)
-        {
-            //Debug.Log("Weapon " + i + " is " + Inventory.Weapon[i] + " And the Name is " + Inventory.Weapon[i].GetComponent<PrWeapon>().WeaponName + " And the bullets are " + Inventory.Weapon[i].GetComponent<PrWeapon>().ActualBullets);
-            playerI.weapons[i] = Inventory.actualWeaponTypes[i];
-            playerI.weaponsAmmo[i] = Inventory.Weapon[i].GetComponent<PrWeapon>().ActualBullets;
-            playerI.weaponsClips[i] = Inventory.Weapon[i].GetComponent<PrWeapon>().ActualClips;
-        }
-    }
+  
     
 
-    public void CreatePlayerInfo()
-    {
-        //Create Player info to be able to save player stats during gameplay
-      
-        Debug.Log("player Info NOT found - Saving Info");
 
-        GameObject playerInfo = new GameObject("playerInfo_" + playerNmb);
-        playerInfo.AddComponent<PrPlayerInfo>();
-        PrPlayerInfo playerI = playerInfo.GetComponent<PrPlayerInfo>();
-        playerI.playerNumber = playerNmb;
-        playerI.usingJoystick = JoystickEnabled;
-        playerI.playerName = Inventory.name;
-        playerI.health = Inventory.Health;
-        playerI.actualHealth = Inventory.ActualHealth;
-        playerI.maxWeaponCount = Inventory.playerWeaponLimit;
-        playerI.weapons = new int[Inventory.playerWeaponLimit];
-        playerI.weaponsAmmo = new int[Inventory.playerWeaponLimit];
-        playerI.weaponsClips = new int[Inventory.playerWeaponLimit];
 
-        for (int i =0; i < Inventory.playerWeaponLimit; i++)
-        {
-            //Debug.Log("Weapon " + i + " is " + Inventory.Weapon[i] + " And the Name is " + Inventory.Weapon[i].GetComponent<PrWeapon>().WeaponName + " And the bullets are " + Inventory.Weapon[i].GetComponent<PrWeapon>().ActualBullets);
-            playerI.weapons[i] = Inventory.actualWeaponTypes[i];
-            playerI.weaponsAmmo[i] = Inventory.Weapon[i].GetComponent<PrWeapon>().ActualBullets;
-            playerI.weaponsClips[i] = Inventory.Weapon[i].GetComponent<PrWeapon>().ActualClips;
-        }
-        
-    }
-
-    /*
-    public void SetMultiplayerInputs()
-    {
-        if (playerNmb > 1)
-        {
-            //Multiplayer only works with joystick input
-            JoystickEnabled = true;
-
-            int values = 0;
-            foreach (string ctrl in playerSettings.playerCtrlMap)
-            {
-                playerCtrlMap[values] = ctrl + playerNmb.ToString();
-                values += 1;
-            }
-
-        }
-        else
-        {
-            playerCtrlMap = playerSettings.playerCtrlMap;
-        }
-        
-    }*/
-    
-
-    public void SetMultiplayerSettings()
-    {
-        if (playerSelection)
-        {
-            playerSelection.material.SetColor("_TintColor", playerSettings.playerColor[playerNmb - 1]);
-        }
-                        
-    }
 
     public void ActivateJoystick(bool IsOn)
     {
@@ -290,29 +184,6 @@ public class PrTopDownCharController : MonoBehaviour {
             AimTargetVisual.SetActive(true);
     }
 
-    public void EndRoll()
-    {
-        Rolling = false;
-        Jumping = false;
-        b_CanRotate = true;
-    }
-
-    public void CanJump(int Value)
-    {
-        if (Value == 1)
-        {
-            b_canJump = true;
-        }
-        else
-        {
-            b_canJump = false;
-        }
-    }
-
-    public void CantRotate()
-    {
-        b_CanRotate = false;
-    }
 
 
 
@@ -357,21 +228,7 @@ public class PrTopDownCharController : MonoBehaviour {
                 v = 0;
             }
 
-            //Roll
-
-            if (Input.GetButton(playerCtrlMap[10]) && !Rolling && !Inventory.UsingObject && Inventory.ActualStamina > RollStaminaUse)
-            {
-                if (evadeAction == EAction.Roll)
-                {
-                    Rolling = true;
-                    Inventory.Weapon[Inventory.ActiveWeapon].GetComponent<PrWeapon>().LaserSight.enabled = false;
-                    Inventory.Weapon[Inventory.ActiveWeapon].GetComponent<PrWeapon>().CancelReload();
-                    Inventory.ActualStamina -= RollStaminaUse;
-                    charAnimator.SetTrigger("Roll");
-                    if (RollVFX)
-                        Instantiate(RollVFX, transform.position, Quaternion.identity);
-                }
-            }
+            
 
             //Jump
             if (Input.GetButton(playerCtrlMap[10]) &&!Rolling && !m_Jump && !Inventory.UsingObject && !crouch && Time.time >= lastJump + 0.2f && m_IsGrounded && b_canJump)
@@ -424,15 +281,14 @@ public class PrTopDownCharController : MonoBehaviour {
             {
                 
                
-                if (Inventory.ActualStamina > 0.0f)
-                {
+
                     Sprinting = true;
                     if (Inventory.alwaysAim)
                     {
                         Inventory.Aiming = false;
                         charAnimator.SetBool("Aiming", false);
                     }
-                }
+                
                 else
                 {
                     Sprinting = false;
@@ -453,7 +309,6 @@ public class PrTopDownCharController : MonoBehaviour {
                 }
             }
 
-            Inventory.UsingStamina = Sprinting;
             
         }
         else
@@ -744,13 +599,5 @@ public class PrTopDownCharController : MonoBehaviour {
 		}
 	}
     
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("EnvZone"))
-        {
-            if (CamScript && other.GetComponent<PrEnvironmentZone>() != null)
-                CamScript.TargetHeight = other.GetComponent<PrEnvironmentZone>().CameraHeight;
-        }
-        
-    }
+
 }

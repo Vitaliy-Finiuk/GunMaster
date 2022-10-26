@@ -173,26 +173,13 @@ public class PrBullet : MonoBehaviour {
         foreach (Collider col in colls)
         {
 
-            if (col.CompareTag("Destroyable") && col.GetComponent<PrDestroyableActor>().team != team)
-            {
-                if (col.GetComponent<Rigidbody>())
-                {
-                    col.gameObject.GetComponent<Rigidbody>().AddExplosionForce(RadialForce, explosivePos, DamageRadius * 3);
-                }
-
-                col.SendMessage("BulletPos", explosivePos, SendMessageOptions.DontRequireReceiver);
-                col.SendMessage("ApplyTempMod", temperatureMod, SendMessageOptions.DontRequireReceiver);
-                col.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
-                
-
-            }
-            else if (col.CompareTag("Player"))
+           if (col.CompareTag("Player"))
             {
                 if (col.GetComponent<PrTopDownCharInventory>())
                 {
                     if (!friendlyFire)
                     {
-                        if (col.GetComponent<PrTopDownCharInventory>().team != team)
+                        if (col.GetComponent<PrTopDownCharInventory>())
                         {
                             if (col.GetComponent<Rigidbody>())
                             {
@@ -279,28 +266,7 @@ public class PrBullet : MonoBehaviour {
 
         if (!RadialDamage)
         {
-            //Debug.Log("Destroyed");
-            if (HitTag == "Destroyable" && Target.GetComponent<PrDestroyableActor>().team != team)
-            {
-                //Debug.Log("Bullet team = " + team + " Target Team = " + Target.GetComponent<PrDestroyableActor>().team);
-
-                Target.SendMessage("BulletPos", transform.position, SendMessageOptions.DontRequireReceiver);
-                Target.SendMessage("ApplyTempMod", temperatureMod, SendMessageOptions.DontRequireReceiver);
-                if (generatesBloodDamage)
-                {
-                    Target.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
-                    if (Target.GetComponent<Rigidbody>())
-                    {
-                        Target.GetComponent<Rigidbody>().AddForceAtPosition(HitNormal * -HitForce, HitPos);
-                    }
-                }
-                    
-                else
-                    Target.SendMessage("ApplyDamageNoVFX", Damage, SendMessageOptions.DontRequireReceiver);
-
-                
-            }
-            else if (HitTag == "Player" && Target.GetComponent<PrTopDownCharInventory>().team != team)
+            if (HitTag == "Player")
             {
                
                 //Debug.Log("Bullet team = " + team + " Target Team = " + Target.GetComponent<PrTopDownCharInventory>().team);
@@ -382,19 +348,7 @@ public class PrBullet : MonoBehaviour {
             foreach (Collider col in colls)
             {
 
-                if (col.CompareTag("Destroyable") && col.GetComponent<PrDestroyableActor>().team != team)
-                {
-                    if (col.GetComponent<Rigidbody>())
-                    {
-                        col.gameObject.GetComponent<Rigidbody>().AddExplosionForce(RadialForce, explosivePos, DamageRadius * 3);
-                    }
-
-                    col.SendMessage("BulletPos", explosivePos, SendMessageOptions.DontRequireReceiver);
-                    col.SendMessage("ApplyTempMod", temperatureMod, SendMessageOptions.DontRequireReceiver);
-                    col.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
-
-                }
-                else if (col.CompareTag("Player") && col.GetComponent<PrTopDownCharInventory>().team != team)
+                 if (col.CompareTag("Player"))
                 {
                     if (col.GetComponent<Rigidbody>())
                     {

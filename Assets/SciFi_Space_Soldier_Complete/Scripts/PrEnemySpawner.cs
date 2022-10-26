@@ -7,7 +7,6 @@ public class PrEnemySpawner : MonoBehaviour {
     public GameObject[] Enemy;
     private int actualEnemy = 0;
 	private GameObject EnemyParent;
-    public PrWaypointsRoute EnemyPatrolRoute;
     public bool startInRandomWaypoint = false;
     public bool SearchPlayerAfterSpawn = false;
 
@@ -117,11 +116,7 @@ public class PrEnemySpawner : MonoBehaviour {
 
         GameObject EnemySpawned = Instantiate(enemyToSpawn, FinalSpawnPosition, rot) as GameObject;
         EnemySpawned.name = enemyToSpawn.name + "_" + TotalSpawned;
-
-        if (EnemyPatrolRoute)
-        {
-            EnemySpawned.GetComponent<PrEnemyAI>().waypointRoute = EnemyPatrolRoute;
-        }
+        
 
         if (SearchPlayerAfterSpawn)
         {
@@ -136,14 +131,8 @@ public class PrEnemySpawner : MonoBehaviour {
                 EnemySpawned.GetComponent<PrEnemyAI>().towerDefenseTarget = towerDefenseTarget;
         }
 
-        EnemySpawned.GetComponent<PrEnemyAI>().SetWaypoints();
 
-        if (EnemyPatrolRoute && startInRandomWaypoint)
-        {
-            int max = EnemySpawned.GetComponent<PrEnemyAI>().waypoints.Length - 1;
-            int rndm = Random.Range(0, max);
-            FinalSpawnPosition = EnemySpawned.GetComponent<PrEnemyAI>().waypoints[rndm].position;
-        }
+
 
         EnemySpawned.transform.parent = EnemyParent.transform;
         EnemySpawned.transform.position = FinalSpawnPosition;
@@ -184,12 +173,7 @@ public class PrEnemySpawner : MonoBehaviour {
                 }
                 GameObject EnemySpawned = Instantiate(Enemy[actualEnemy], Vector3.zero , rot) as GameObject;
                 EnemySpawned.name = Enemy[actualEnemy].name + "_" + TotalSpawned;
-
-                if (EnemyPatrolRoute)
-                {
-                    EnemySpawned.GetComponent<PrEnemyAI>().waypointRoute = EnemyPatrolRoute;
-                       
-                }
+                
 
                 if (SearchPlayerAfterSpawn)
                 {
@@ -206,14 +190,8 @@ public class PrEnemySpawner : MonoBehaviour {
                         EnemySpawned.GetComponent<PrEnemyAI>().towerDefenseTarget = towerDefenseTarget;
                 }
 
-                EnemySpawned.GetComponent<PrEnemyAI>().SetWaypoints();
 
-                if (EnemyPatrolRoute && startInRandomWaypoint)
-                {
-                    int max = EnemySpawned.GetComponent<PrEnemyAI>().waypoints.Length - 1;
-                    int rndm = Random.Range(0, max);
-                    FinalSpawnPosition = EnemySpawned.GetComponent<PrEnemyAI>().waypoints[rndm].position;
-                }
+
 
                 EnemySpawned.transform.position = FinalSpawnPosition;
                 

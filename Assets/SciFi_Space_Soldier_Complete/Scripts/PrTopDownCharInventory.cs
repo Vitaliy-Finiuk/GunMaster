@@ -222,10 +222,9 @@ public class PrTopDownCharInventory : MonoBehaviour {
         CreateNoiseTrigger();
 
         //Start PlayerInfo to Load and Save player Info across levels
-        if (GameObject.Find("playerInfo_" + charController.playerNmb) && charController.playerSettings.TypeSelected == PrPlayerSettings.GameMode.SinglePlayer)
+        if (GameObject.Find("playerInfo_" + charController.playerNmb))
         {
             Debug.Log("Player Info already Found");
-            charController.LoadPlayerInfo();
             SetHealth(ActualHealth);
         }
 
@@ -311,11 +310,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
             if (BurnAndFrozenVFXParent)
                 actualBurningVFX.transform.parent = BurnAndFrozenVFXParent;
         }
-        if (useQuickReload && quickReloadPanel && quickReloadMarker && quickReloadZone)
-        {
-            QuickReloadActive(false);
-        }
-
+       
         //Update players on Enemies
         AIUpdatePlayerCount();
 
@@ -327,18 +322,10 @@ public class PrTopDownCharInventory : MonoBehaviour {
             ApplyOneShotHealth();
 
         
-        //Create Player Info object if isn´t there yet
-        if (GameObject.Find("playerInfo_" + charController.playerNmb) == null && charController.playerSettings.TypeSelected == PrPlayerSettings.GameMode.SinglePlayer)
-        {
-            charController.CreatePlayerInfo();
-        }
+
     }
 
-    public void LoadBulletsAndClipsState(int weapon)
-    {
-        Weapon[weapon].GetComponent<PrWeapon>().ActualBullets = PrPlayerInfo.player1.weaponsAmmo[weapon];
-        Weapon[weapon].GetComponent<PrWeapon>().ActualClips = PrPlayerInfo.player1.weaponsClips[weapon];
-    }
+
 
     void ApplyOneShotHealth()
     {
@@ -398,10 +385,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
                     weapInt += 1;
             }
 
-            if (GameObject.Find("playerInfo_" + charController.playerNmb))
-            {
-                LoadBulletsAndClipsState(weapType);
-            }
 
             weapType += 1;
         }
@@ -515,95 +498,9 @@ public class PrTopDownCharInventory : MonoBehaviour {
     }
 
     
-    void WeaponReload()
-    {
-        if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().ActualBullets < Weapon[ActiveWeapon].GetComponent<PrWeapon>().Bullets && Weapon[ActiveWeapon].GetComponent<PrWeapon>().Reloading == false &&
-            Weapon[ActiveWeapon].GetComponent<PrWeapon>().ActualClips > 0)
-        {
-            Weapon[ActiveWeapon].GetComponent<PrWeapon>().LaserSight.enabled = false;
-            Weapon[ActiveWeapon].GetComponent<PrWeapon>().Reload();
-            //charAnimator.SetBool("Reloading", true);
-            CanShoot = false;
-            //Disable Arm IK
-            EnableArmIK(false);
-
-            if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().useQuickReload)
-            {
-                QuickReloadActive(true);
-            }
-        }
-    }
-
-    void QuickReloadActive(bool state)
-    {
-        //Debug.Log("QuickReloading " + state );
-        quickReloadPanel.SetActive(state);
-    }
 
 
-    public void SetPlayerColors(int mode, int team, PrPlayerSettings playerSettings)
-    { 
-        if (changeColorsInMultiplayer)
-        {
-            if (mode == 0)
-            {
-                //Singleplayer Colors
-                if (playerSettings.useSinglePlayerColor)
-                {
-                    foreach (Renderer rend in MeshRenderers)
-                    {
-                        rend.material.SetColor("_MaskedColorA", playerSettings.singlePlayerColor);
-                    }
-                }
-
-            }
-            else if (mode == 1)
-            {
-                //Deathmatch Colors
-                foreach (Renderer rend in MeshRenderers)
-                {
-                    rend.material.SetColor("_MaskedColorA", playerSettings.playerColor[team]);
-                }
-            }
-            else if (mode == 2)
-            {
-                //Coop Colors
-                if (playerSettings.useCoopPlayerColor)
-                {
-                    foreach (Renderer rend in MeshRenderers)
-                    {
-                        rend.material.SetColor("_MaskedColorA", playerSettings.coopPlayerColor[team]);
-                    }
-                }
-            }
-            else if (mode == 3)
-            {
-                //Team DeathMatch Colors
-                foreach (Renderer rend in MeshRenderers)
-                {
-                    Debug.Log(team);
-                    rend.material.SetColor("_MaskedColorA", playerSettings.teamColor[team]);
-
-                }
-
-            }
-        }
-       
-    }
-
-    void EndMelee()
-    {
-        charController.useRootMotion = false;
-        charController.Rolling = false;
-        charController.EndRoll();
-    }
-
-    void MeleeEvent()
-    {
-        //this event comes from animation, the exact moment of HIT
-        Weapon[ActiveWeapon].GetComponent<PrWeapon>().AttackMelee();
-       
-    }
+    
     // Update is called once per frame
     void Update () {
 
@@ -678,7 +575,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
                             charAnimator.SetTrigger("AttackMelee");
                             charAnimator.SetInteger("MeleeType", Random.Range(0, 2));
                             charController.useRootMotion = true;
-                            charController.CantRotate();
                         }
                         //Ranged Weapon
                         else 
@@ -691,26 +587,14 @@ public class PrTopDownCharInventory : MonoBehaviour {
                                 {
                                     if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().ActualBullets > 0)
                                         charAnimator.SetTrigger("Shoot");
-                                    else
-                                        WeaponReload();
+                                  
                                 }
                             }
                         }
                     }
                 }
 			}
-			// Reload Weapon
-			if (Input.GetButtonDown(charController.playerCtrlMap[5]))
-			{
-                if (charController.Rolling == false && charController.Sprinting == false && isThrowing == false)
-                {
-                   WeaponReload();
-                }
-                if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().Reloading == true)
-                {
-                    Weapon[ActiveWeapon].GetComponent<PrWeapon>().TryQuickReload();
-                }
-			}
+			
             // Aim
 			if (Input.GetButton(charController.playerCtrlMap[8]) || Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[2])) > 0.3f || Mathf.Abs( Input.GetAxis(charController.playerCtrlMap[3])) > 0.3f)
 			{
@@ -752,7 +636,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
                     StartUsingGeneric("Use");
 
                     UsableObject.GetComponent<PrUsableDevice>().User = this.gameObject;
-                    UsableObject.GetComponent<PrUsableDevice>().Use();
                 }
 
             }
@@ -1260,9 +1143,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
                 //HUDQuickReloadPanel.transform.GetComponent<RectTransform>().localPosition = new Vector3(XPos + (multiplayerHUDOffset * (charController.playerNmb - 1)), YPos, 0);
             }
 
-            //SET HUD COLOR ACCORDING TO PLAYER COLOR
-            if (HUDColorBar)
-                HUDColorBar.GetComponent<UnityEngine.UI.Image>().color = charController.playerSettings.playerColor[charController.playerNmb - 1] ;
+  
         }
     }
 
@@ -1654,16 +1535,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
         }
     }
 
-	public void EndReload()
-	{
-		CanShoot = true;
-        charAnimator.SetBool("Reloading", false);
-        if (useQuickReload && quickReloadPanel && quickReloadMarker && quickReloadZone)
-        {
-            QuickReloadActive(false);
-        }
-        EnableArmIK(true);
-    }
+
 
 	void OnTriggerStay(Collider other) {
         

@@ -160,7 +160,6 @@ public class PrWeapon : MonoBehaviour {
             HUDWeaponBulletsBar.GetComponent<Image>().fillAmount = (1.0f / Bullets) * ActualBullets;
             HUDWeaponBulletsBar.GetComponent<RectTransform>().localScale = Vector3.one;
 
-            team = Player.GetComponent<PrTopDownCharInventory>().team;
         }
 
         //Basic Object Pooling Initialization ONLY FOR RANGED WEAPONS
@@ -236,10 +235,7 @@ public class PrWeapon : MonoBehaviour {
             playerCamera = GameObject.Find("PlayerCamera").GetComponent<PrTopDownCamera>();
 
         }
-        else if (GameObject.Find("MutiplayerCamera") != null)
-        {
-            playerCamera = GameObject.Find("MutiplayerCamera").GetComponent<PrTopDownMutiplayerCam>();
-        }
+        
 
         if (useQuickReload)
         {
@@ -562,7 +558,6 @@ public class PrWeapon : MonoBehaviour {
                     if (usePooling)
                         Bullet.transform.localScale = Bullet.GetComponent<PrBullet>().OriginalScale * BulletSize;
 
-                    ShootFXLight.GetComponent<PrLightAnimator>().AnimateLight(true);
                     ActualBullets -= 1;
 
                     if (playerCamera)
@@ -602,93 +597,9 @@ public class PrWeapon : MonoBehaviour {
                     //Shoot Beam
                     RaycastHit hit;
 
-                    if (Physics.Raycast(ShootFXPos.position, ShootFXPos.forward, out hit))
-                    {
-                        GameObject target = hit.collider.gameObject;
-                         HitPos = hit.point;
-                        hitNormal = hit.normal;
-                        Beam.GetComponent<PrWeaponLaserBeam>().SetPositions(ShootFXPos.position, HitPos);
+                   
 
-                        if (hit.collider.tag == "Player" && target.GetComponent<PrTopDownCharInventory>().team != team)
-                        {
-                            target.SendMessage("PlayerTeam", team, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("BulletPos", hit.point, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("ApplyTempMod", tempModFactor, SendMessageOptions.DontRequireReceiver);
-                            
-                            if (generatesBloodDamage)
-                            {
-                                target.SendMessage("ApplyDamage", BulletDamage, SendMessageOptions.DontRequireReceiver);
-                                if (target.GetComponent<PrTopDownCharInventory>().DamageFX != null)
-                                {
-                                    Instantiate(target.GetComponent<PrTopDownCharInventory>().DamageFX, HitPos, Quaternion.LookRotation(hitNormal));
-                                    useDefaultImpactFX = false;
-                                }
-                            }
-                            else
-                            {
-                                target.SendMessage("ApplyDamageNoVFX", BulletDamage, SendMessageOptions.DontRequireReceiver);
-                            }
-
-                        }
-                        else if (hit.collider.tag == "Enemy" && target.GetComponent<PrEnemyAI>().team != team)
-                        {
-                            target.SendMessage("PlayerTeam", team, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("BulletPos", hit.point, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("ApplyTempMod", tempModFactor, SendMessageOptions.DontRequireReceiver);
-                            
-                            if (generatesBloodDamage)
-                            {
-                                target.SendMessage("ApplyDamage", BulletDamage, SendMessageOptions.DontRequireReceiver);
-                                if (target.GetComponent<PrEnemyAI>().damageVFX != null)
-                                {
-                                    Instantiate(target.GetComponent<PrEnemyAI>().damageVFX, HitPos, Quaternion.LookRotation(hitNormal));
-                                    useDefaultImpactFX = false;
-                                }
-                            }
-                            else
-                            {
-                                target.SendMessage("ApplyDamageNoVFX", BulletDamage, SendMessageOptions.DontRequireReceiver);
-                            }
-                        }
-
-                        else if (hit.collider.tag == "AIPlayer" && target.GetComponent<PrEnemyAI>().team != team)
-                        {
-                            target.SendMessage("PlayerTeam", team, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("BulletPos", hit.point, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("ApplyTempMod", tempModFactor, SendMessageOptions.DontRequireReceiver);
-                            
-                            if (generatesBloodDamage)
-                            {
-                                target.SendMessage("ApplyDamage", BulletDamage, SendMessageOptions.DontRequireReceiver);
-
-                                if (target.GetComponent<PrEnemyAI>().damageVFX != null)
-                                {
-                                    Instantiate(target.GetComponent<PrEnemyAI>().damageVFX, HitPos, Quaternion.LookRotation(hitNormal));
-                                    useDefaultImpactFX = false;
-                                }
-                            }
-                            else
-                            {
-                                target.SendMessage("ApplyDamageNoVFX", BulletDamage, SendMessageOptions.DontRequireReceiver);
-                            }
-                        }
-                        else if (hit.collider.tag == "Destroyable" && target.GetComponent<PrDestroyableActor>().team != team)
-                        {
-                            //Debug.Log("Bullet team = " + team + " Target Team = " + Target.GetComponent<PrDestroyableActor>().team);
-                            target.SendMessage("BulletPos", hit.point, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("ApplyTempMod", tempModFactor, SendMessageOptions.DontRequireReceiver);
-                            target.SendMessage("ApplyDamage", BulletDamage, SendMessageOptions.DontRequireReceiver);
-                            if (target.GetComponent<Rigidbody>())
-                            {
-                                target.GetComponent<Rigidbody>().AddForceAtPosition(hitNormal * Random.Range(-200.0f,-400.0f), HitPos);
-                            }
-                        }
-                    }
-
-                    else
-                    {
-                        Beam.GetComponent<PrWeaponLaserBeam>().SetPositions(ShootFXPos.position, ShootTarget.position + new Vector3(0,1.2f,0));
-                    }
+              
 
                     //default Hit VFX
                     if (useDefaultImpactFX)
@@ -707,7 +618,6 @@ public class PrWeapon : MonoBehaviour {
                     if (ActualGameBullet >= actualBeams.Length)
                         ActualGameBullet = 0;
 
-                    ShootFXLight.GetComponent<PrLightAnimator>().AnimateLight(true);
                     ActualBullets -= 1;
 
                     if (playerCamera)
@@ -748,8 +658,6 @@ public class PrWeapon : MonoBehaviour {
         {
             EmitParticles(Muzzle);
         }
-        if (ShootFXLight)
-            ShootFXLight.GetComponent<PrLightAnimator>().AnimateLight(true);
 
         if (Vector3.Distance(playerPos + Vector3.up, ShootFXPos.position) <= MeleeRadius)
         {
@@ -760,121 +668,8 @@ public class PrWeapon : MonoBehaviour {
         }
     }
 
-    public void AttackMelee()
-    {
-        PlayShootAudio();
-
-        //Object Pooling VFX
-        if (Muzzle)
-        {
-            EmitParticles(Muzzle);
-        }
-        //Use Light
-        if (ShootFXLight)
-            ShootFXLight.GetComponent<PrLightAnimator>().AnimateLight(true);
-
-        //Start Finding Enemy Target
-        meleeFinalTarget = new List<GameObject>();
-
-        GameObject[] EnemysTemp = GameObject.FindGameObjectsWithTag("Enemy");
-        GameObject[] PlayersTemp = GameObject.FindGameObjectsWithTag("Player");
-
-        GameObject[] Enemys = new GameObject[EnemysTemp.Length + PlayersTemp.Length];
-        int t = 0;
-        foreach (GameObject E in EnemysTemp)
-        {
-            Enemys[t] = E;
-            t += 1;
-        }
-        foreach (GameObject E in PlayersTemp)
-        {
-            Enemys[t] = E;
-            t += 1;
-        }
 
 
-        if (Enemys != null)
-        {
-            float BestDistance = 100.0f;
-
-            foreach (GameObject Enemy in Enemys)
-            {
-                Vector3 EnemyPos = Enemy.transform.position;
-                Vector3 EnemyDirection = EnemyPos - Player.transform.position;
-                float EnemyDistance = EnemyDirection.magnitude;
-
-                if (Vector3.Angle(Player.transform.forward, EnemyDirection) <= 90 && EnemyDistance < MeleeRadius)
-                {
-                    //
-                    if (Enemy.GetComponent<PrEnemyAI>())
-                    {
-                        if (Enemy.GetComponent<PrEnemyAI>().actualState != PrEnemyAI.AIState.Dead && Enemy.GetComponent<PrEnemyAI>().team != team)
-                        {
-                            if (EnemyDistance < BestDistance)
-                            {
-                                BestDistance = EnemyDistance;
-                                meleeFinalTarget.Add(Enemy);// = Enemy;
-                            }
-
-                        }
-                    }
-                    else if (Enemy.GetComponent<PrTopDownCharInventory>())
-                    {
-                        if (Enemy.GetComponent<PrTopDownCharInventory>().isDead != true && Enemy.GetComponent<PrTopDownCharInventory>().team != team)
-                        {
-                            if (EnemyDistance < BestDistance)
-                            {
-                                BestDistance = EnemyDistance;
-                                meleeFinalTarget.Add(Enemy);// = Enemy;
-                            }
-
-                        }
-                    }
-                   
-                }
-            }
-        }
-
-        GameObject[] destroyables = GameObject.FindGameObjectsWithTag("Destroyable");
-
-        if (destroyables != null)
-        {
-            float BestDistance = 100.0f;
-
-            foreach (GameObject destroyable in destroyables)
-            {
-                Vector3 destroyablePos = destroyable.transform.position;
-                Vector3 destrDirection = destroyablePos - Player.transform.position;
-                float EnemyDistance = destrDirection.magnitude;
-
-                if (Vector3.Angle(Player.transform.forward, destrDirection) <= 90 && EnemyDistance < MeleeRadius)
-                {
-                    if (EnemyDistance < BestDistance)
-                    {
-                        BestDistance = EnemyDistance;
-                        meleeFinalTarget.Add(destroyable);// = Enemy;
-                    }
-                 }
-            }
-        }
-
-        foreach (GameObject meleeTarget in meleeFinalTarget)
-        {
-            //Debug.Log("Hit Enemy Sucessfully");
-            meleeTarget.SendMessage("PlayerTeam", team, SendMessageOptions.DontRequireReceiver);
-            meleeTarget.SendMessage("BulletPos", ShootFXPos.position, SendMessageOptions.DontRequireReceiver);
-            meleeTarget.SendMessage("ApplyDamage", meleeDamage, SendMessageOptions.DontRequireReceiver);
-        }
-            
-       
-    }
-
-    public void LoadAmmo(int LoadType)
-    {
-        ActualBullets = Bullets;
-        ActualClips = Clips / LoadType;
-        WeaponEndReload();
-    }
 
     void OnDrawGizmos()
     {

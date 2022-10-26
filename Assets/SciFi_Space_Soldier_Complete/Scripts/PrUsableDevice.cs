@@ -91,7 +91,7 @@ public class PrUsableDevice : MonoBehaviour {
         }*/
 	}
 
-	public void Use()
+	/*public void Use()
 	{
         if (IsEnabled && !InUse)
         {
@@ -168,7 +168,7 @@ public class PrUsableDevice : MonoBehaviour {
             UseBarParent.SetActive(true);
         InUseTimer = 0.0f;
 
-    }
+    }*/
     
     public void CancelUse()
     {
@@ -194,36 +194,7 @@ public class PrUsableDevice : MonoBehaviour {
             UseBar.GetComponent<UnityEngine.UI.Image>().transform.localScale = new Vector3(0f, 1.0f, 1.0f);
     }
 
-    void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player") && MeshSelector && IsEnabled)
-        {
-            MeshSelector.SetActive(true);
-            if (!AffectedTarget)
-                AffectedTarget = other.gameObject;
-            if (UseText && KeyType != Key.None)
-            {
-                if (other.gameObject.GetComponent<PrTopDownCharInventory>().RedKeys > 0)
-                {
-                    UseText.text = "Use";
-                    UseText.color = Color.white;
-                    UseText.lineSpacing = 1f;
-                }
-                
-                else
-                {
-                    UseText.text = "Need Red Key";
-                    UseText.color = Color.red;
-                    UseText.lineSpacing = 1f;
-                }
-                   
-
-
-            }
-
-        }
-
-    }
+   
 
     void OnTriggerExit(Collider other)
     {
