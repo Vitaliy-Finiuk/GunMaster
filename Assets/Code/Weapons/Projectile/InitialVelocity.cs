@@ -31,9 +31,6 @@ public class InitialVelocity : ProjectileModifier {
 
 			_projectile.Velocity = _transform.TransformDirection(_projectile.Velocity);
 
-			if (inheritVelocity)
-				_projectile.Velocity += _projectile.Weapon.Character.Velocity;
-
 			_calculated = true;
 		}
 

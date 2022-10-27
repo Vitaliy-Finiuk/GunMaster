@@ -2,15 +2,11 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class PrTopDownCharInventory : MonoBehaviour {
+public class PrTopDownCharInventory : MonoBehaviour
+{
+    [Header("Visuals")] public string characterName = "Stickman";
 
-    [Header("Visuals")]
-
-    public string characterName = "Stickman";
-
-    [Header("Stats")]
-
-    public int Health = 100;
+    [Header("Stats")] public int Health = 100;
     [HideInInspector] public int ActualHealth = 100;
     public bool oneShotHealth = false;
 
@@ -18,28 +14,16 @@ public class PrTopDownCharInventory : MonoBehaviour {
 
     private bool Damaged = false;
     private float DamagedTimer = 0.0f;
-    
-    private SphereCollider NoiseTrigger;
-    [HideInInspector]
-    public float actualNoise = 0.0f;
-    private float noiseDecaySpeed = 10.0f;
 
 
-
-
-    [Header("Weapons")]
-    public bool alwaysAim = false;
+    [Header("Weapons")] public bool alwaysAim = false;
     public int playerWeaponLimit = 2;
     public PrWeapon[] InitialWeapons;
-    
-    [HideInInspector]
-    public bool Armed = true;
-    [HideInInspector]
-    public GameObject[] Weapon;
-    [HideInInspector]
-    public int[] actualWeaponTypes;
-    [HideInInspector]
-    public int ActiveWeapon = 0;
+
+    [HideInInspector] public bool Armed = true;
+    [HideInInspector] public GameObject[] Weapon;
+    [HideInInspector] public int[] actualWeaponTypes;
+    [HideInInspector] public int ActiveWeapon = 0;
     private bool CanShoot = true;
     public PrWeaponList WeaponListObject;
     private GameObject[] WeaponList;
@@ -52,23 +36,18 @@ public class PrTopDownCharInventory : MonoBehaviour {
     [HideInInspector] public bool Aiming = false;
 
     private float FireRateTimer = 0.0f;
-	private float LastFireTimer = 0.0f;
+    private float LastFireTimer = 0.0f;
 
     private Transform AimTarget;
 
-    [Header("VFX")]
-    public GameObject DamageFX;
+    [Header("VFX")] public GameObject DamageFX;
     private Vector3 LastHitPos = Vector3.zero;
 
-    [Space]
-    public GameObject damageSplatVFX;
+    [Space] public GameObject damageSplatVFX;
     private PrBloodSplatter actualSplatVFX;
 
 
-
-
-    [Header("Sound FX")]
-    public float FootStepsRate = 0.4f;
+    [Header("Sound FX")] public float FootStepsRate = 0.4f;
     public float GeneralFootStepsVolume = 1.0f;
     public AudioClip[] Footsteps;
     private float LastFootStepTime = 0.0f;
@@ -81,12 +60,10 @@ public class PrTopDownCharInventory : MonoBehaviour {
     public GameObject HUDDamageFullScreen;
 
     public GameObject HUDUseHelper;
-    
 
-    [HideInInspector]
-    public PrTopDownCharController charController;
-    [HideInInspector]
-    public Animator charAnimator;
+
+    [HideInInspector] public PrTopDownCharController charController;
+    [HideInInspector] public Animator charAnimator;
 
     private GameObject[] Canvases;
 
@@ -96,8 +73,8 @@ public class PrTopDownCharInventory : MonoBehaviour {
     private PrCharacterIK CharacterIKController;
 
 
-
-    private void Start() {
+    private void Start()
+    {
         //Creates weapon array
         Weapon = new GameObject[playerWeaponLimit];
         actualWeaponTypes = new int[playerWeaponLimit];
@@ -110,7 +87,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
         Audio = GetComponent<AudioSource>() as AudioSource;
         charAnimator = GetComponent<Animator>();
 
-       
+
         charController = GetComponent<PrTopDownCharController>();
         AimTarget = charController.AimFinalPos;
         HUDHealthBar.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -120,7 +97,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
         if (InitialWeapons.Length > 0)
         {
             InstantiateWeapons();
-            
+
             Armed = true;
         }
         else
@@ -144,11 +121,10 @@ public class PrTopDownCharInventory : MonoBehaviour {
         InitializeHUD();
 
 
-
-
         if (damageSplatVFX)
         {
-            GameObject GOactualSplatVFX = Instantiate(damageSplatVFX, transform.position, transform.rotation) as GameObject;
+            GameObject GOactualSplatVFX =
+                Instantiate(damageSplatVFX, transform.position, transform.rotation) as GameObject;
             GOactualSplatVFX.transform.position = transform.position;
             GOactualSplatVFX.transform.parent = transform;
             actualSplatVFX = GOactualSplatVFX.GetComponent<PrBloodSplatter>();
@@ -160,9 +136,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
 
         if (oneShotHealth)
             ApplyOneShotHealth();
-
-        
-
     }
 
 
@@ -200,14 +173,13 @@ public class PrTopDownCharInventory : MonoBehaviour {
 
             foreach (GameObject weap in WeaponList)
             {
-                
                 if (Weap.gameObject.name == weap.name)
                 {
                     //Debug.Log("Weapon to pickup = " + weap + " " + weapInt);
                     actualWeaponTypes[weapType] = weapInt;
                     PickupWeapon(weapInt);
                 }
-                    
+
                 else
                     weapInt += 1;
             }
@@ -215,7 +187,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
 
             weapType += 1;
         }
-
     }
 
     public void FootStep()
@@ -242,7 +213,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
 
     private void EnableArmIK(bool active)
     {
-        if (CharacterIKController && useArmIK )
+        if (CharacterIKController && useArmIK)
             if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().useIK)
                 CharacterIKController.ikActive = active;
             else
@@ -250,8 +221,8 @@ public class PrTopDownCharInventory : MonoBehaviour {
     }
 
 
-    private void Update () {
-
+    private void Update()
+    {
         if (Damaged)
         {
             DamagedTimer = Mathf.Lerp(DamagedTimer, 0.0f, Time.deltaTime * 10);
@@ -262,78 +233,73 @@ public class PrTopDownCharInventory : MonoBehaviour {
                 Damaged = false;
             }
 
- 
 
-           if (HUDDamageFullScreen)
-                HUDDamageFullScreen.GetComponent<UnityEngine.UI.Image>().color = new Vector4(1, 1, 1, DamagedTimer * 0.5f);
-            
+            if (HUDDamageFullScreen)
+                HUDDamageFullScreen.GetComponent<UnityEngine.UI.Image>().color =
+                    new Vector4(1, 1, 1, DamagedTimer * 0.5f);
         }
 
         if (!isDead)
-		{
+        {
             //Calculates Temperature and damage
 
             // Equip Weapon
-            if (Input.GetButtonUp(charController.playerCtrlMap[6]) && Aiming == false )
+            if (Input.GetButtonUp(charController.playerCtrlMap[6]) && Aiming == false)
             {
-
                 if (Armed)
                     Armed = false;
                 else
                     Armed = true;
                 EquipWeapon(Armed);
             }
-    
+
             // Shoot Weapons
-            if ( Input.GetAxis(charController.playerCtrlMap[4]) >= 0.5f || Input.GetButton(charController.playerCtrlMap[15]) )
+            if (Input.GetAxis(charController.playerCtrlMap[4]) >= 0.5f ||
+                Input.GetButton(charController.playerCtrlMap[15]))
             {
-
-                    if (CanShoot && Weapon[ActiveWeapon] != null && Time.time >= (LastFireTimer + FireRateTimer))
-                    {
-                      
-                        //Ranged Weapon
-
-                            if (Aiming)
-                            {
-                                LastFireTimer = Time.time;
-                                Weapon[ActiveWeapon].GetComponent<PrWeapon>().Shoot();
-                       
-                                    if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().ActualBullets > 0)
-                                        charAnimator.SetTrigger("Shoot");
-                                  
-                            }
-                    }
-			}
-			
-            // Aim
-			if (Input.GetButton(charController.playerCtrlMap[8]) || Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[2])) > 0.3f || Mathf.Abs( Input.GetAxis(charController.playerCtrlMap[3])) > 0.3f)
-			{
-                if ( !UsingObject && Armed )
+                if (CanShoot && Weapon[ActiveWeapon] != null && Time.time >= (LastFireTimer + FireRateTimer))
                 {
-               
-                        if (!alwaysAim)
-                        {
-                            Aiming = true;
- 
-                                
-                            charAnimator.SetBool("RunStop", false);
-                            charAnimator.SetBool("Aiming", true);
-                        }
-                       
+                    //Ranged Weapon
+
+                    if (Aiming)
+                    {
+                        LastFireTimer = Time.time;
+                        Weapon[ActiveWeapon].GetComponent<PrWeapon>().Shoot();
+
+                        if (Weapon[ActiveWeapon].GetComponent<PrWeapon>().ActualBullets > 0)
+                            charAnimator.SetTrigger("Shoot");
+                    }
                 }
-                
+            }
+
+            // Aim
+            if (Input.GetButton(charController.playerCtrlMap[8]) ||
+                Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[2])) > 0.3f ||
+                Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[3])) > 0.3f)
+            {
+                if (!UsingObject && Armed)
+                {
+                    if (!alwaysAim)
+                    {
+                        Aiming = true;
+
+
+                        charAnimator.SetBool("RunStop", false);
+                        charAnimator.SetBool("Aiming", true);
+                    }
+                }
             }
             //Stop Aiming
-			else if (Input.GetButtonUp(charController.playerCtrlMap[8]) || Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[2])) < 0.3f || Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[3])) < 0.3f)
-			{
+            else if (Input.GetButtonUp(charController.playerCtrlMap[8]) ||
+                     Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[2])) < 0.3f ||
+                     Mathf.Abs(Input.GetAxis(charController.playerCtrlMap[3])) < 0.3f)
+            {
                 if (!alwaysAim)
                 {
                     Aiming = false;
                     charAnimator.SetBool("Aiming", false);
                 }
             }
-            
-          
 
 
             if (alwaysAim)
@@ -348,18 +314,8 @@ public class PrTopDownCharInventory : MonoBehaviour {
             {
                 HUDUseHelper.transform.rotation = Quaternion.identity;
             }
-
-            
-
-
-
-            
-
-
         }
-        
     }
-
 
 
     void EquipWeapon(bool bArmed)
@@ -410,7 +366,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
         }
 
         EnableArmIK(bArmed);
-
     }
 
     void StartUsingGeneric(string Type)
@@ -425,7 +380,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
         EnableArmIK(false);
     }
 
-   
+
     public void SpawnTeleportFX()
     {
         Damaged = true;
@@ -443,7 +398,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
         //New multi weapon system
         bool replaceWeapon = true;
 
-        for (int i = 0; i < playerWeaponLimit ; i++)
+        for (int i = 0; i < playerWeaponLimit; i++)
         {
             if (Weapon[i] == null)
             {
@@ -451,22 +406,20 @@ public class PrTopDownCharInventory : MonoBehaviour {
 
                 Weapon[i] = NewWeapon;
                 replaceWeapon = false;
-                
+
 
                 break;
             }
-
         }
+
         if (replaceWeapon)
         {
             //Debug.Log("Replacing weapon" + Weapon[ActiveWeapon].name + " using " + NewWeapon.name);
             DestroyImmediate(Weapon[ActiveWeapon]);
             Weapon[ActiveWeapon] = NewWeapon;
-
         }
 
         InitializeWeapons();
-        
     }
 
 
@@ -481,8 +434,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
         FireRateTimer = ActualW.FireRate;
 
 
-
-        
         //ArmIK
         if (useArmIK)
         {
@@ -504,7 +455,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
                     CharacterIKController.leftHandTarget = ArmIKTarget;
                     CharacterIKController.ikActive = true;
                 }
-
             }
             else
             {
@@ -512,7 +462,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
                     CharacterIKController.ikActive = false;
             }
         }
-        
+
 
         ActualW.Audio = WeaponR.GetComponent<AudioSource>();
 
@@ -532,8 +482,6 @@ public class PrTopDownCharInventory : MonoBehaviour {
             charAnimator.SetLayerWeight(PistolActLayer, 0.0f);
             charAnimator.SetBool("Armed", true);
         }
-  
-
     }
 
     private void InitializeHUD()
@@ -548,20 +496,14 @@ public class PrTopDownCharInventory : MonoBehaviour {
     }
 
 
-
-
- 
-
-	public void StopUse()
-	{
-		charController.m_CanMove = true;
-		charAnimator.SetTrigger("StopUse");
+    public void StopUse()
+    {
+        charController.m_CanMove = true;
+        charAnimator.SetTrigger("StopUse");
         UsingObject = false;
 
         EnableArmIK(true);
-       
     }
-
 
 
     public void BulletPos(Vector3 BulletPosition)
@@ -570,7 +512,7 @@ public class PrTopDownCharInventory : MonoBehaviour {
         LastHitPos.y = 0;
     }
 
-    public void SetNewSpeed(float speedFactor) => 
+    public void SetNewSpeed(float speedFactor) =>
         charController.m_MoveSpeedSpecialModifier = speedFactor;
 
     public void SetHealth(int HealthInt)
@@ -583,15 +525,13 @@ public class PrTopDownCharInventory : MonoBehaviour {
                 new Vector3(Mathf.Clamp((1.0f / Health) * ActualHealth, 0.1f, 1.0f), 1.0f, 1.0f);
         else
             HUDHealthBar.GetComponent<RectTransform>().localScale = new Vector3(0.0f, 1.0f, 1.0f);
-
     }
 
- 
 
     public void ApplyDamage(int Damage)
-	{
+    {
         if (ActualHealth > 0)
-		{
+        {
             //Here you can put some Damage Behaviour if you want
             SetHealth(ActualHealth - Damage);
 
@@ -608,34 +548,30 @@ public class PrTopDownCharInventory : MonoBehaviour {
             {
                 if (actualSplatVFX)
                     actualSplatVFX.transform.parent = null;
-                
+
                 Die(false);
             }
-                
         }
-		
-	}
-    
-    public void Die(bool temperatureDeath)
-	{
-        
+    }
 
+    public void Die(bool temperatureDeath)
+    {
         EnableArmIK(false);
-		isDead = true;
-		charAnimator.SetBool("Dead", true);
+        isDead = true;
+        charAnimator.SetBool("Dead", true);
 
         charController.m_isDead = true;
 
         //Set invisible to Bullets
         GetComponent<Rigidbody>().isKinematic = true;
         GetComponent<Collider>().enabled = false;
-        
+
         this.tag = "Untagged";
         charController.playerSelection.enabled = false;
 
         DestroyHUD();
 
-      
+
         //Send Message to Game script to notify Dead
         SendMessageUpwards("PlayerDied", charController.playerNmb, SendMessageOptions.DontRequireReceiver);
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -645,28 +581,19 @@ public class PrTopDownCharInventory : MonoBehaviour {
         }
 
 
-
-               
-
         AIUpdatePlayerCount();
 
         Destroy(charController);
         Destroy(GetComponent<Collider>());
         //Destroy(this);
-        
-
     }
 
     public void DestroyHUD()
     {
-
         if (HUDDamageFullScreen != null)
         {
             if (HUDDamageFullScreen.transform.parent.gameObject != null)
                 Destroy(HUDDamageFullScreen.transform.parent.gameObject);
         }
-
     }
-    
-        
 }

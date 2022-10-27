@@ -50,7 +50,7 @@ public class WeaponProjectile : ProjectileModifier {
 		_transform.localScale = _originalScale * Size;
 		_modifiers = GetComponents<ProjectileModifier>();
 		
-		IgnoreColliders(Weapon.Character.GetComponents<Collider>());
+		//IgnoreColliders(Weapon.Character.GetComponents<Collider>());
 	}
 
 	void FixedUpdate() {

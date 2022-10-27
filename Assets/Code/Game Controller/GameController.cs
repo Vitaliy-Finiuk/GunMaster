@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour {
 
 	public static Weapon weapon;
 	public static PauseGame pauseGame;
-	public static CursorController cursorController;
+	//public static CursorController cursorController;
 	public static WeaponGUI weaponGUI;
 
 	public static void AddSectionStatic() {

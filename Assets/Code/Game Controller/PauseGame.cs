@@ -22,15 +22,13 @@ public class PauseGame : MonoBehaviour {
 	public void Pause(bool paused) {
 		Paused = paused;
 		if (paused) {
-			Time.timeScale = 0;
+			Time.timeScale = 0.01f;
 			UIController.Show();
-			GameController.cursorController.ShowCursor(true);
 			PlayerInput.Disable();
 		}
 		else {
 			Time.timeScale = 1;
 			UIController.Hide();
-			GameController.cursorController.ShowCursor(false);
 			PlayerInput.Enable();
 		}
 	}

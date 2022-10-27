@@ -9,7 +9,6 @@ public class Weapon : MonoBehaviour
 {
 
 	public PrTopDownCharInventory CharController;
-	public CharacterController3D Character { get; private set; }
 	public int SectionCount { get { return sections.Count; } }
 	public List<WeaponProjectile> Projectiles { get; private set; }
 	public Transform ModuleParent { get { return CreateModuleParent(); } }
@@ -22,7 +21,6 @@ public class Weapon : MonoBehaviour
 	private Transform _moduleParent;
 
 	void Awake() {
-		Character = GetComponentInParent<CharacterController3D>();
 		_transform = transform;
 
 		Projectiles = new List<WeaponProjectile>();

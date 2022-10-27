@@ -266,9 +266,6 @@ public class PrWeapon : MonoBehaviour {
 
             Audio.PlayOneShot(ShootSFX[FootStepAudio], RandomVolume);
 
-            if (!AIWeapon)
-                Player.SendMessage("MakeNoise", shootingNoise);
-           
         }
     }
 
