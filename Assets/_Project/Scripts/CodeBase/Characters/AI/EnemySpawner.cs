@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Characters.AI
+namespace CodeBase.Characters.AI
 {
     public class EnemySpawner : MonoBehaviour {
 

@@ -1,8 +1,8 @@
-﻿using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Components.Fire_Components;
-using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Components.Transition_Components;
+﻿using CodeBase.WeaponsSystem.Weapons.Components.Fire_Components;
+using CodeBase.WeaponsSystem.Weapons.Components.Transition_Components;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core
+namespace CodeBase.WeaponsSystem.Weapons.Core
 {
 	public class WeaponModule : MonoBehaviour {
 

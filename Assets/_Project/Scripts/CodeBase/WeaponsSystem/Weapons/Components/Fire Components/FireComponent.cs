@@ -1,7 +1,7 @@
-﻿using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core;
+﻿using CodeBase.WeaponsSystem.Weapons.Core;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Components.Fire_Components
+namespace CodeBase.WeaponsSystem.Weapons.Components.Fire_Components
 {
 	[RequireComponent(typeof(WeaponModule))]
 	public abstract class FireComponent : MonoBehaviour {

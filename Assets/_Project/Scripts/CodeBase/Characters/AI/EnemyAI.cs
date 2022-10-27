@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using _Project.Scripts.CodeBase.Characters.Player;
-using _Project.Scripts.CodeBase.Particle_Effects;
-using _Project.Scripts.CodeBase.WeaponsSystem;
-using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile;
+using CodeBase.Characters.Player;
+using CodeBase.Particle_Effects;
+using CodeBase.WeaponsSystem;
+using CodeBase.WeaponsSystem.Weapons.Projectile;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Characters.AI
+namespace CodeBase.Characters.AI
 {
     public class EnemyAI : MonoBehaviour
     {

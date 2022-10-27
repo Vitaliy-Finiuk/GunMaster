@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core;
+using CodeBase.WeaponsSystem.Weapons.Core;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Components.Transition_Components
+namespace CodeBase.WeaponsSystem.Weapons.Components.Transition_Components
 {
 	public class SpawnProjectileComponent : TransitionComponent {
 	

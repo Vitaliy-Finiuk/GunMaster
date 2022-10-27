@@ -1,8 +1,8 @@
-﻿using _Project.Scripts.CodeBase.Particle_Effects;
-using _Project.Scripts.CodeBase.WeaponsSystem;
+﻿using CodeBase.Particle_Effects;
+using CodeBase.WeaponsSystem;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Characters.Player
+namespace CodeBase.Characters.Player
 {
     public class TopDownCharSettings : MonoBehaviour
     {
@@ -24,11 +24,11 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 
         [HideInInspector] public bool Armed = true;
         [HideInInspector] public GameObject[] Weapon;
-        [HideInInspector] public int[] actualWeaponTypes;
+        [HideInInspector] public int[] ActualWeaponTypes;
         [HideInInspector] public int ActiveWeapon = 0;
-        private bool CanShoot = true;
+        private readonly bool _canShoot = true;
         public WeaponList WeaponListObject;
-        private GameObject[] WeaponList;
+        private GameObject[] _weaponList;
         public Transform WeaponR;
         public Transform WeaponL;
 
@@ -37,16 +37,16 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 
         [HideInInspector] public bool Aiming = false;
 
-        private float FireRateTimer = 0.0f;
-        private float LastFireTimer = 0.0f;
+        private float _fireRateTimer = 0.0f;
+        private float _lastFireTimer = 0.0f;
 
-        private Transform AimTarget;
+        private Transform _aimTarget;
 
         [Header("VFX")] public GameObject DamageFX;
         private Vector3 LastHitPos = Vector3.zero;
 
-        [Space] public GameObject damageSplatVFX;
-        private BloodSplatter actualSplatVFX;
+        [Space] public GameObject DamageSplatVFX;
+        private BloodSplatter _actualSplatVFX;
 
 
         [Header("Sound FX")] public float FootStepsRate = 0.4f;
@@ -76,9 +76,9 @@ namespace _Project.Scripts.CodeBase.Characters.Player
         private void Start()
         {
             Weapon = new GameObject[playerWeaponLimit];
-            actualWeaponTypes = new int[playerWeaponLimit];
+            ActualWeaponTypes = new int[playerWeaponLimit];
 
-            WeaponList = WeaponListObject.weapons;
+            _weaponList = WeaponListObject.weapons;
 
             ActualHealth = Health;
 
@@ -87,7 +87,7 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 
 
             charController = GetComponent<TopDownCharController>();
-            AimTarget = charController.AimFinalPos;
+            _aimTarget = charController.AimFinalPos;
             HUDHealthBar.GetComponent<RectTransform>().localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
 
@@ -114,13 +114,13 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             InitializeHUD();
 
 
-            if (damageSplatVFX)
+            if (DamageSplatVFX)
             {
                 GameObject GOactualSplatVFX =
-                    Instantiate(damageSplatVFX, transform.position, transform.rotation) as GameObject;
+                    Instantiate(DamageSplatVFX, transform.position, transform.rotation) as GameObject;
                 GOactualSplatVFX.transform.position = transform.position;
                 GOactualSplatVFX.transform.parent = transform;
-                actualSplatVFX = GOactualSplatVFX.GetComponent<BloodSplatter>();
+                _actualSplatVFX = GOactualSplatVFX.GetComponent<BloodSplatter>();
             }
 
             AIUpdatePlayerCount();
@@ -157,11 +157,11 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             {
                 int weapInt = 0;
 
-                foreach (GameObject weap in WeaponList)
+                foreach (GameObject weap in _weaponList)
                 {
                     if (Weap.gameObject.name == weap.name)
                     {
-                        actualWeaponTypes[weapType] = weapInt;
+                        ActualWeaponTypes[weapType] = weapInt;
                         PickupWeapon(weapInt);
                     }
 
@@ -238,13 +238,13 @@ namespace _Project.Scripts.CodeBase.Characters.Player
                 if (Input.GetAxis(charController.playerCtrlMap[4]) >= 0.5f ||
                     Input.GetButton(charController.playerCtrlMap[15]))
                 {
-                    if (CanShoot && Weapon[ActiveWeapon] != null && Time.time >= (LastFireTimer + FireRateTimer))
+                    if (_canShoot && Weapon[ActiveWeapon] != null && Time.time >= (_lastFireTimer + _fireRateTimer))
                     {
                         //Ranged Weapon
 
                         if (Aiming)
                         {
-                            LastFireTimer = Time.time;
+                            _lastFireTimer = Time.time;
                             Weapon[ActiveWeapon].GetComponent<Weapon>().Shoot();
 
                             if (Weapon[ActiveWeapon].GetComponent<Weapon>().ActualBullets > 0)
@@ -293,6 +293,7 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             }
         }
 
+        #region Weapon
 
         private void EquipWeapon(bool bArmed)
         {
@@ -311,7 +312,7 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             }
             else
             {
-                if (Weapon[ActiveWeapon].GetComponent<Weapon>().Type == global::_Project.Scripts.CodeBase.WeaponsSystem.Weapon.WT.Rifle)
+                if (Weapon[ActiveWeapon].GetComponent<Weapon>().Type == global::CodeBase.WeaponsSystem.Weapon.WT.Rifle)
                 {
                     int RifleActlLayer = charAnimator.GetLayerIndex("RifleActions");
                     charAnimator.SetLayerWeight(RifleActlLayer, 1.0f);
@@ -327,32 +328,13 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             EnableArmIK(bArmed);
         }
 
-        private void StartUsingGeneric(string Type)
-        {
-            Aiming = false;
-            UsingObject = true;
-
-            charController.m_CanMove = false;
-            charAnimator.SetTrigger(Type);
-
-
-            EnableArmIK(false);
-        }
-
-
-        public void SpawnTeleportFX()
-        {
-            Damaged = true;
-            DamagedTimer = 1.0f;
-        }
-
         public void PickupWeapon(int WeaponType)
         {
-            GameObject NewWeapon = Instantiate(WeaponList[WeaponType], WeaponR.position, WeaponR.rotation) as GameObject;
+            GameObject NewWeapon = Instantiate(_weaponList[WeaponType], WeaponR.position, WeaponR.rotation) as GameObject;
             NewWeapon.transform.parent = WeaponR.transform;
             NewWeapon.transform.localRotation = Quaternion.Euler(90, 0, 0);
             NewWeapon.name = "Player_" + NewWeapon.GetComponent<Weapon>().WeaponName;
-            actualWeaponTypes[ActiveWeapon] = WeaponType;
+            ActualWeaponTypes[ActiveWeapon] = WeaponType;
 
             bool replaceWeapon = true;
 
@@ -362,8 +344,6 @@ namespace _Project.Scripts.CodeBase.Characters.Player
                 {
                     Weapon[i] = NewWeapon;
                     replaceWeapon = false;
-
-
                     break;
                 }
             }
@@ -377,16 +357,15 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             InitializeWeapons();
         }
 
-
         private void InitializeWeapons()
         {
             Weapon ActualW = Weapon[ActiveWeapon].GetComponent<Weapon>();
             Weapon[ActiveWeapon].SetActive(true);
             //
 
-            ActualW.ShootTarget = AimTarget;
+            ActualW.ShootTarget = _aimTarget;
             ActualW.Player = this.gameObject;
-            FireRateTimer = ActualW.FireRate;
+            _fireRateTimer = ActualW.FireRate;
 
 
             //ArmIK
@@ -421,7 +400,7 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 
             ActualW.Audio = WeaponR.GetComponent<AudioSource>();
 
-            if (ActualW.Type == global::_Project.Scripts.CodeBase.WeaponsSystem.Weapon.WT.Rifle)
+            if (ActualW.Type == global::CodeBase.WeaponsSystem.Weapon.WT.Rifle)
             {
                 int PistolLayer = charAnimator.GetLayerIndex("PistolLyr");
                 charAnimator.SetLayerWeight(PistolLayer, 0.0f);
@@ -429,6 +408,27 @@ namespace _Project.Scripts.CodeBase.Characters.Player
                 charAnimator.SetLayerWeight(PistolActLayer, 0.0f);
                 charAnimator.SetBool("Armed", true);
             }
+        }
+
+        #endregion
+
+
+        private void StartUsingGeneric(string Type)
+        {
+            Aiming = false;
+            UsingObject = true;
+
+            charController.m_CanMove = false;
+            charAnimator.SetTrigger(Type);
+
+            EnableArmIK(false);
+        }
+
+
+        public void SpawnTeleportFX()
+        {
+            Damaged = true;
+            DamagedTimer = 1.0f;
         }
 
         private void InitializeHUD()
@@ -483,16 +483,16 @@ namespace _Project.Scripts.CodeBase.Characters.Player
                 Damaged = true;
                 DamagedTimer = 1.0f;
 
-                if (actualSplatVFX)
+                if (_actualSplatVFX)
                 {
-                    actualSplatVFX.transform.LookAt(LastHitPos);
-                    actualSplatVFX.Splat();
+                    _actualSplatVFX.transform.LookAt(LastHitPos);
+                    _actualSplatVFX.Splat();
                 }
 
                 if (ActualHealth <= 0)
                 {
-                    if (actualSplatVFX)
-                        actualSplatVFX.transform.parent = null;
+                    if (_actualSplatVFX)
+                        _actualSplatVFX.transform.parent = null;
 
                     Die(false);
                 }
@@ -505,7 +505,7 @@ namespace _Project.Scripts.CodeBase.Characters.Player
             isDead = true;
             charAnimator.SetBool("Dead", true);
 
-            charController.m_isDead = true;
+            charController._isDead = true;
 
             GetComponent<Rigidbody>().isKinematic = true;
             GetComponent<Collider>().enabled = false;

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using _Project.Scripts.CodeBase.Characters.Player;
-using _Project.Scripts.CodeBase.Game_Controller;
-using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Util;
+using CodeBase.Characters.Player;
+using CodeBase.Game_Controller;
+using CodeBase.WeaponsSystem.Weapons.Util;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core
+namespace CodeBase.WeaponsSystem.Weapons.Core
 {
 	[Serializable]
 	public class TransformSequence : Sequence<Transform> { }

@@ -1,7 +1,7 @@
-﻿using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core;
+﻿using CodeBase.WeaponsSystem.Weapons.Core;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile
+namespace CodeBase.WeaponsSystem.Weapons.Projectile
 {
 	[RequireComponent(typeof(WeaponProjectile))]
 	public class ProjectileModifier : MonoBehaviour {

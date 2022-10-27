@@ -1,9 +1,7 @@
 ﻿using SimpleInputNamespace;
 using UnityEngine;
 
-//using PrUtils;
-
-namespace _Project.Scripts.CodeBase.Characters.Player
+namespace CodeBase.Characters.Player
 {
 	[RequireComponent(typeof(Rigidbody))]
 	[RequireComponent(typeof(CapsuleCollider))]
@@ -16,12 +14,9 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 		public Renderer playerSelection;
 		//Inputs
 		[HideInInspector]
-		public string[] playerCtrlMap = {"Horizontal", "Vertical", "LookX", "LookY","FireTrigger", "Reload",
-			"EquipWeapon", "Sprint", "Aim", "ChangeWTrigger", "Roll", "Use", "Crouch", "ChangeWeapon", "Throw"  ,"Fire", "Mouse ScrollWheel"};
+		public string[] playerCtrlMap = {"Horizontal", "Vertical", "LookX", "LookY","FireTrigger", "Aim", "Use", "Crouch", "ChangeWeapon"  ,"Fire"};
 
 		[Header("Movement")]
-		[SerializeField] float m_JumpPower = 12f;
-		[Range(1f, 4f)] [SerializeField] float m_GravityMultiplier = 2f;
 		[SerializeField] float m_MoveSpeedMultiplier = 1f;
 		[HideInInspector]
 		public float m_MoveSpeedSpecialModifier = 1f;
@@ -32,7 +27,6 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 
 		public float PlayerRunSpeed = 1f;
 		public float PlayerAimSpeed = 1f;
-		public float PlayerSprintSpeed = 1f;
 		public float PlayerCrouchSpeed = 0.75f;
 
 		public float RunRotationSpeed = 100f;
@@ -42,27 +36,24 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 		public float AnimatorSprintDampValue = 0.2f;
 		public float AnimatorAimingDampValue = 0.1f;
 
-		Rigidbody m_Rigidbody;
-		Animator charAnimator;
-		bool m_IsGrounded;
-		float m_OrigGroundCheckDistance;
-		const float k_Half = 0.5f;
-		float m_TurnAmount;
-		float m_ForwardAmount;
-		float m_CapsuleHeight;
-		Vector3 m_CapsuleCenter;
-		CapsuleCollider m_Capsule;
-		bool m_Crouching;
-		private bool crouch = false;
+		private Rigidbody _rigidbody;
+		private Animator _charAnimator;
+		private bool _isGrounded;
+		private float _origGroundCheckDistance;
+		private const float Half = 0.5f;
+		private float _turnAmount;
+		private float _forwardAmount;
+		private float _capsuleHeight;
+		private Vector3 _capsuleCenter;
+		private CapsuleCollider _capsuleCollider;
+		private bool _crouching;
+		private bool _crouch = false;
 
-		private bool b_CanRotate = true;
-		private bool m_Jump;
-		private float lastJump = 0.0f;
-		private bool b_canJump = true;
+		private bool _canRotate = true;
 		[HideInInspector] public bool Sprinting = false;
 
 
-		[HideInInspector] public bool m_isDead = false;
+		[HideInInspector] public bool _isDead = false;
 		[HideInInspector] public bool m_CanMove = true;
 
 		[Header("Aiming")]
@@ -72,66 +63,48 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 
 		private Transform m_Cam;                  // A reference to the main camera in the scenes transform
 		[HideInInspector]
-		public Vector3 m_Move;					  // the world-relative desired move direction, calculated from the camForward and user input.
-		private Vector3 smoothMove;
-
-		[Header("Joystick / Keyboard")]
-		public bool JoystickEnabled = true;
-		private GameObject JoystickTarget;
-		private GameObject JoystickLookRot;
+		public Vector3 _Move;					  // the world-relative desired move direction, calculated from the camForward and user input.
+		private Vector3 _smoothMove;
 
 		[Header("Mobile Joysctick")]
 		[SerializeField] private Joystick _joystick;
-    
-   
+		private GameObject _joystickTarget;
+		private GameObject _joystickLookRot;
+		public bool JoystickEnabled = true;
 
 		private TopDownCharSettings _settings;
 
 
-		void Start()
+		private void Start()
 		{
 			_settings = GetComponent<TopDownCharSettings>();
 
-			JoystickTarget = new GameObject();
-			JoystickTarget.name = "JoystickTarget";
-			JoystickTarget.transform.position = transform.position;
-			JoystickTarget.transform.parent = transform.parent;
+			_joystickTarget = new GameObject();
+			_joystickTarget.name = "JoystickTarget";
+			_joystickTarget.transform.position = transform.position;
+			_joystickTarget.transform.parent = transform.parent;
 
-			JoystickLookRot = new GameObject();
-			JoystickLookRot.name = "JoystickLookRotation";
-			JoystickLookRot.transform.position = transform.position;
-			JoystickLookRot.transform.parent = transform;
+			_joystickLookRot = new GameObject();
+			_joystickLookRot.name = "JoystickLookRotation";
+			_joystickLookRot.transform.position = transform.position;
+			_joystickLookRot.transform.parent = transform;
 
-			// get the transform of the main camera
 			if (Camera.main != null)
-			{
 				m_Cam = CamScript.transform.GetComponentInChildren<Camera>().transform;
-			}
-			else
-			{
-				Debug.LogWarning(
-					"Warning: no main camera found. Third person character needs a Camera tagged \"MainCamera\", for camera-relative controls.");
-				// we use self-relative controls in this case, which probably isn't what the user wants, but hey, we warned them!
-			}
 
-			charAnimator = GetComponent<Animator>();
-			m_Rigidbody = GetComponent<Rigidbody>();
-			m_Capsule = GetComponent<CapsuleCollider>();
-			m_CapsuleHeight = m_Capsule.height;
-			m_CapsuleCenter = m_Capsule.center;
+			_charAnimator = GetComponent<Animator>();
+			_rigidbody = GetComponent<Rigidbody>();
+			_capsuleCollider = GetComponent<CapsuleCollider>();
+			_capsuleHeight = _capsuleCollider.height;
+			_capsuleCenter = _capsuleCollider.center;
 
-			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-			m_OrigGroundCheckDistance = m_GroundCheckDistance;
-
-
+			_rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			_origGroundCheckDistance = m_GroundCheckDistance;
 
 			if (JoystickEnabled)
 				ActivateJoystick(true);
 			else
 				ActivateJoystick(false);
-
-
-
 		}
 
 		public void StopMoving(string Case)
@@ -139,21 +112,13 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 			if (Case == "GameOver")
 			{
 				m_CanMove = false;
-				b_CanRotate = false;
+				_canRotate = false;
 
-				charAnimator.SetTrigger("GameOver");
+				_charAnimator.SetTrigger("GameOver");
 				_settings.isDead = true;
 			}
 		}
-
-
-
-  
-    
-
-
-
-
+		
 		public void ActivateJoystick(bool IsOn)
 		{
 			if (IsOn)
@@ -163,54 +128,23 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 		}
 
 
-
-
-		// Update is called once per frame
-		void Update () {
-
-			//Time.timeScale = Slowmotion;
-
-			if (Input.GetKeyDown(KeyCode.K) && playerNmb <= 1)
-			{
-				if (JoystickEnabled)
-					JoystickEnabled = false;
-				else
-					JoystickEnabled = true;
-
-				ActivateJoystick(JoystickEnabled);
-			}
+		private void Update () {
 
 			MouseTargetPos();
 
-			if (!m_isDead && m_CanMove)
+			if (!_isDead && m_CanMove)
 			{
            
-				//Crouch
-				if (Input.GetKey(KeyCode.LeftControl) && playerNmb <= 1|| Input.GetButton(playerCtrlMap[12]))
-				{
-					print(playerCtrlMap[13]);
-					crouch = true;
-               
-				}            	
-				else
-				{
-					crouch = false;
-				}	
-
 				float h = _joystick.xAxis.value;
 				float v =  _joystick.yAxis.value;
 
-				if (crouch && _settings.Aiming)
+				if (_crouch && _settings.Aiming)
 				{
 					h = 0;
 					v = 0;
 				}
 
-            
-
-
-
-				if (b_CanRotate)
+				if (_canRotate)
 				{
 					if (_settings.Aiming )
 					{
@@ -220,52 +154,31 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 							JoystickLook(h, v);
 					}
 					else
-					{
 						RunningLook(new Vector3(h, 0, v));
-					}
 				}
 
-				m_Move = new Vector3(h, 0, v);// * m_MoveSpeedSpecialModifier;
+				_Move = new Vector3(h, 0, v);// * m_MoveSpeedSpecialModifier;
             
 
-				m_Move = m_Move.normalized * m_MoveSpeedSpecialModifier;
-				//Rotate move in camera space
-				m_Move = Quaternion.Euler(0, 0 - transform.eulerAngles.y + m_Cam.transform.parent.transform.eulerAngles.y, 0) * m_Move;
+				_Move = _Move.normalized * m_MoveSpeedSpecialModifier;
+				_Move = Quaternion.Euler(0, 0 - transform.eulerAngles.y + m_Cam.transform.parent.transform.eulerAngles.y, 0) * _Move;
 
-				//Move Player
-				Move(m_Move, crouch, m_Jump);
-				m_Jump = false;
-
-
-            
+				Move(_Move, _crouch);
 			}
 			else
 			{
-				m_ForwardAmount = 0.0f;
-				m_TurnAmount = 0.0f;
+				_forwardAmount = 0.0f;
+				_turnAmount = 0.0f;
 				_settings.Aiming = false;
 				UpdateAnimator(Vector3.zero);
 			}
         
 		}
 	
-		private void RunningLook(Vector3 Direction)
-		{
-			if (Direction.magnitude >= 0.25f)
-			{
-				Direction = Quaternion.Euler(0, 0 + m_Cam.transform.parent.transform.eulerAngles.y, 0) * Direction;
-
-
-				transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Direction), Time.deltaTime * RunRotationSpeed);
-
-				transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
-			}
-       
-		}
 
 		private void JoystickLook(float h, float v)
 		{
-			JoystickTarget.transform.rotation = transform.rotation;
+			_joystickTarget.transform.rotation = transform.rotation;
         
 			//Joystick Look input
 			float LookX = Input.GetAxis(playerCtrlMap[2]);
@@ -275,32 +188,113 @@ namespace _Project.Scripts.CodeBase.Characters.Player
        
 			JoystickLookVec = Quaternion.Euler(0, 0 + m_Cam.transform.parent.transform.eulerAngles.y, 0) * JoystickLookVec;
         
-			JoystickTarget.transform.position = transform.position + JoystickLookVec * 5;
+			_joystickTarget.transform.position = transform.position + JoystickLookVec * 5;
 
 			if (Mathf.Abs(LookX) <= 0.2f && Mathf.Abs(LookY) <= 0.2f)
 			{
-				JoystickTarget.transform.localPosition += JoystickTarget.transform.forward * 2;
+				_joystickTarget.transform.localPosition += _joystickTarget.transform.forward * 2;
 			}
 
-			JoystickLookRot.transform.LookAt(JoystickTarget.transform.position);
+			_joystickLookRot.transform.LookAt(_joystickTarget.transform.position);
 
-			AimTargetVisual.transform.position = JoystickTarget.transform.position;
+			AimTargetVisual.transform.position = _joystickTarget.transform.position;
 			AimTargetVisual.transform.LookAt(transform.position);
 
-			transform.rotation = Quaternion.Lerp(transform.rotation, JoystickLookRot.transform.rotation, Time.deltaTime * AimingRotationSpeed);
+			transform.rotation = Quaternion.Lerp(transform.rotation, _joystickLookRot.transform.rotation, Time.deltaTime * AimingRotationSpeed);
 			transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
-
-        
-
 		}
 
-    
+		#region Movement
+		private void RunningLook(Vector3 Direction)
+		{
+			if (Direction.magnitude >= 0.25f)
+			{
+				Direction = Quaternion.Euler(0, 0 + m_Cam.transform.parent.transform.eulerAngles.y, 0) * Direction;
+
+				transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Direction), Time.deltaTime * RunRotationSpeed);
+
+				transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
+			}
+		}
+
+		public void Move(Vector3 move, bool crouch)
+		{
+			if (!_settings.UsingObject)
+			{
+				CheckGroundStatus();
+
+				_turnAmount = move.x;
+				_forwardAmount = move.z;
+
+       
+
+				ScaleCapsuleForCrouching(crouch);
+				PreventStandingInLowHeadroom();
+
+				UpdateAnimator(move);
+			}
+		
+		}
+
+		private void ScaleCapsuleForCrouching(bool crouch)
+		{
+			if (_isGrounded && crouch)
+			{
+				if (_crouching) return;
+				_capsuleCollider.height = _capsuleCollider.height / 1.5f;
+				_capsuleCollider.center = _capsuleCollider.center / 1.5f;
+				_crouching = true;
+			}
+			else
+			{
+				Ray crouchRay = new Ray(_rigidbody.position + Vector3.up * _capsuleCollider.radius * Half, Vector3.up);
+				float crouchRayLength = _capsuleHeight - _capsuleCollider.radius * Half;
+				if (Physics.SphereCast(crouchRay, _capsuleCollider.radius * Half, crouchRayLength))
+				{
+					_crouching = true;
+					return;
+				}
+				_capsuleCollider.height = _capsuleHeight;
+				_capsuleCollider.center = _capsuleCenter;
+				_crouching = false;
+			}
+		}
+
+		private void PreventStandingInLowHeadroom()
+		{
+			if (!_crouching)
+			{
+				Ray crouchRay = new Ray(_rigidbody.position + Vector3.up * _capsuleCollider.radius * Half, Vector3.up);
+				float crouchRayLength = _capsuleHeight - _capsuleCollider.radius * Half;
+				if (Physics.SphereCast(crouchRay, _capsuleCollider.radius * Half, crouchRayLength)) 
+					_crouching = true;
+			}
+		}
+
+		private void CheckGroundStatus()
+		{
+			RaycastHit hitInfo;
+
+			if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance))
+			{
+				_isGrounded = true;
+				_charAnimator.applyRootMotion = true;
+			}
+			else
+			{
+				_isGrounded = false;
+				_charAnimator.applyRootMotion = false;
+			}
+		}
+		#endregion
+
+		#region Mouse
+
 		private void MouseTargetPos()
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 2000f, 9)) {
-				//Debug.Log("---------- Hit Something------------");
 				Vector3 FinalPos = new Vector3( hit.point.x, 0,hit.point.z);
 
 				AimTargetVisual.transform.position = FinalPos;
@@ -311,188 +305,78 @@ namespace _Project.Scripts.CodeBase.Characters.Player
 	
 		private void MouseAim(Vector3 FinalPos)
 		{
-			JoystickLookRot.transform.LookAt(FinalPos);
-			transform.rotation = Quaternion.Lerp(transform.rotation, JoystickLookRot.transform.rotation, Time.deltaTime * AimingRotationSpeed);
+			_joystickLookRot.transform.LookAt(FinalPos);
+			transform.rotation = Quaternion.Lerp(transform.rotation, _joystickLookRot.transform.rotation, Time.deltaTime * AimingRotationSpeed);
 			transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
 
 		}
 
-		void PlayFootStepAudio()
-		{
-		
-		}
-	
-		public void Move(Vector3 move, bool crouch, bool jump)
-		{
-			if (!_settings.UsingObject)
-			{
-				CheckGroundStatus();
+		#endregion
 
-				m_TurnAmount = move.x;
-				m_ForwardAmount = move.z;
+		#region Animator
 
-       
-
-				ScaleCapsuleForCrouching(crouch);
-				PreventStandingInLowHeadroom();
-
-				// send input and other state parameters to the animator
-				UpdateAnimator(move);
-			}
-		
-		}
-	
-	
-		void ScaleCapsuleForCrouching(bool crouch)
-		{
-			if (m_IsGrounded && crouch)
-			{
-				if (m_Crouching) return;
-				m_Capsule.height = m_Capsule.height / 1.5f;
-				m_Capsule.center = m_Capsule.center / 1.5f;
-				m_Crouching = true;
-			}
-			else
-			{
-				Ray crouchRay = new Ray(m_Rigidbody.position + Vector3.up * m_Capsule.radius * k_Half, Vector3.up);
-				float crouchRayLength = m_CapsuleHeight - m_Capsule.radius * k_Half;
-				if (Physics.SphereCast(crouchRay, m_Capsule.radius * k_Half, crouchRayLength))
-				{
-					m_Crouching = true;
-					return;
-				}
-				m_Capsule.height = m_CapsuleHeight;
-				m_Capsule.center = m_CapsuleCenter;
-				m_Crouching = false;
-			}
-		}
-	
-		void PreventStandingInLowHeadroom()
-		{
-			// prevent standing up in crouch-only zones
-			if (!m_Crouching)
-			{
-				Ray crouchRay = new Ray(m_Rigidbody.position + Vector3.up * m_Capsule.radius * k_Half, Vector3.up);
-				float crouchRayLength = m_CapsuleHeight - m_Capsule.radius * k_Half;
-				if (Physics.SphereCast(crouchRay, m_Capsule.radius * k_Half, crouchRayLength))
-				{
-					m_Crouching = true;
-				}
-			}
-		}
-	
-	
-		void UpdateAnimator(Vector3 move)
+		private void UpdateAnimator(Vector3 move)
 		{
 			// update the animator parameters
-			charAnimator.SetFloat("Y", m_ForwardAmount, AnimatorAimingDampValue, Time.deltaTime);
-			charAnimator.SetFloat("X", m_TurnAmount, AnimatorAimingDampValue, Time.deltaTime);
+			_charAnimator.SetFloat("Y", _forwardAmount, AnimatorAimingDampValue, Time.deltaTime);
+			_charAnimator.SetFloat("X", _turnAmount, AnimatorAimingDampValue, Time.deltaTime);
                 
 			if (!Sprinting)
-				charAnimator.SetFloat("Speed", move.magnitude, AnimatorSprintDampValue, Time.deltaTime);
+				_charAnimator.SetFloat("Speed", move.magnitude, AnimatorSprintDampValue, Time.deltaTime);
 			else
-				charAnimator.SetFloat("Speed", 2.0f, AnimatorRunDampValue, Time.deltaTime);
+				_charAnimator.SetFloat("Speed", 2.0f, AnimatorRunDampValue, Time.deltaTime);
 
-			charAnimator.SetBool("Crouch", m_Crouching);
-			charAnimator.SetBool("OnGround", m_IsGrounded);
+			_charAnimator.SetBool("Crouch", _crouching);
+			_charAnimator.SetBool("OnGround", _isGrounded);
 			
-			// the anim speed multiplier allows the overall speed of walking/running to be tweaked in the inspector,
-			// which affects the movement speed because of the root motion.
-			if (m_IsGrounded && move.magnitude > 0)
+			if (_isGrounded && move.magnitude > 0)
 			{
             
 				if (_settings.Aiming )
 				{
 					move *= PlayerAimSpeed;
 					transform.Translate(move * Time.deltaTime);
-					charAnimator.applyRootMotion = false;
+					_charAnimator.applyRootMotion = false;
 				}
 				else if (_settings.UsingObject)
 				{
 					move = move * 0.0f;
 					transform.Translate(Vector3.zero);
-					charAnimator.applyRootMotion = false;
+					_charAnimator.applyRootMotion = false;
 				}
 				else
 				{
 					if (useRootMotion)
-						charAnimator.applyRootMotion = true;
+						_charAnimator.applyRootMotion = true;
 					else
 					{
-     
-						if (Sprinting)
-						{
-							move *= PlayerSprintSpeed;
-						}
-						else if (crouch)
-						{
+						if (_crouch)
 							move *= PlayerCrouchSpeed;
-						}
-						else 
-						{
+						else
 							move *= PlayerRunSpeed;
-						}
 
 						transform.Translate(move * Time.deltaTime );
-						charAnimator.applyRootMotion = false;
-                    
-                    
+						_charAnimator.applyRootMotion = false;
 					}
 				}
 
-				charAnimator.speed = m_AnimSpeedMultiplier ;
+				_charAnimator.speed = m_AnimSpeedMultiplier ;
 			}
 			else
-			{
-				// don't use that while airborne
-				charAnimator.speed = 1;
-			}
+				_charAnimator.speed = 1;
 		}
 	
-	
-		void HandleAirborneMovement()
-		{
-			// apply extra gravity from multiplier:
-			Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplier) - Physics.gravity;
-			m_Rigidbody.AddForce(extraGravityForce);
-		
-			m_GroundCheckDistance = m_Rigidbody.velocity.y < 0 ? m_OrigGroundCheckDistance : 0.01f;
-		}
-	
-	
-
-		
-		//This function it´s used only for Aiming and Jumping states. Those anims doesn´t have root motion so we move the player by script
 		public void OnAnimatorMove()
 		{
-			// we implement this function to override the default root motion.
-			// this allows us to modify the positional speed before it's applied.
-			if (m_IsGrounded && Time.deltaTime > 0)
+			if (_isGrounded && Time.deltaTime > 0)
 			{
-				Vector3 v = (charAnimator.deltaPosition * m_MoveSpeedMultiplier ) / Time.deltaTime;
+				Vector3 v = (_charAnimator.deltaPosition * m_MoveSpeedMultiplier ) / Time.deltaTime;
 			
-				// we preserve the existing y part of the current velocity.
-				v.y = m_Rigidbody.velocity.y;
-				m_Rigidbody.velocity = v;
+				v.y = _rigidbody.velocity.y;
+				_rigidbody.velocity = v;
 			}
 		}
 
-		void CheckGroundStatus()
-		{
-			RaycastHit hitInfo;
-
-			if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance))
-			{
-				m_IsGrounded = true;
-				charAnimator.applyRootMotion = true;
-			}
-			else
-			{
-				m_IsGrounded = false;
-				charAnimator.applyRootMotion = false;
-			}
-		}
-    
-
+		#endregion
 	}
 }

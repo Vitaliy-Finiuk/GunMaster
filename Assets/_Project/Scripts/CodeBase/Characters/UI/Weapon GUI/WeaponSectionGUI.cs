@@ -1,8 +1,8 @@
-﻿using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core;
+﻿using CodeBase.WeaponsSystem.Weapons.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Project.Scripts.CodeBase.UI.Weapon_GUI
+namespace CodeBase.UI.Weapon_GUI
 {
 	public class WeaponSectionGUI : MonoBehaviour {
 

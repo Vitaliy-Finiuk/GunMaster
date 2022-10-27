@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.UI
+namespace CodeBase.UI
 {
 	public class UIController : MonoBehaviour {
 

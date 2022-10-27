@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Particle_Effects
+namespace CodeBase.Particle_Effects
 {
     public class BloodSplatter : MonoBehaviour
     {

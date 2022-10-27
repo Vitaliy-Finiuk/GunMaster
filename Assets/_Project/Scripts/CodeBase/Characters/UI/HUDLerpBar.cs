@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Characters.UI
+namespace CodeBase.Characters.UI
 {
     public class HUDLerpBar : MonoBehaviour {
         [SerializeField] private GameObject _referenceGo;

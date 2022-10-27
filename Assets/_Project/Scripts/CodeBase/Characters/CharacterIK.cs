@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Characters
+namespace CodeBase.Characters
 {
     [RequireComponent(typeof(Animator))]
     public class CharacterIK : MonoBehaviour

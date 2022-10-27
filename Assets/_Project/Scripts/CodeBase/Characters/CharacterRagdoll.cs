@@ -1,20 +1,20 @@
-﻿using _Project.Scripts.CodeBase.WeaponsSystem;
-using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile;
+﻿using CodeBase.WeaponsSystem;
+using CodeBase.WeaponsSystem.Weapons.Projectile;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Characters
+namespace CodeBase.Characters
 {
     public class CharacterRagdoll : MonoBehaviour {
 
         public GameObject[] ragdollBones;
         public bool DeactivateAtStart = true;
-        private Transform weaponObject;
+        private Transform _weaponObject;
 
         private ParticleSystem[] VFXParticles;
-        private bool active = false;
+        private bool _active = false;
 
-        private float ragdollTimer = 5.0f;
-        private float activeRagdollTimer = 0.0f;
+        private readonly float ragdollTimer = 5.0f;
+        private float _activeRagdollTimer = 0.0f;
 
         private void Start () {
             InitializeRagdoll();
@@ -22,12 +22,11 @@ namespace _Project.Scripts.CodeBase.Characters
                 VFXParticles = GetComponentsInChildren<ParticleSystem>();
         }
 
-        // Update is called once per frame
         private void Update () {
-            if (active)
+            if (_active)
             {
-                if (activeRagdollTimer < ragdollTimer)
-                    activeRagdollTimer += Time.deltaTime;
+                if (_activeRagdollTimer < ragdollTimer)
+                    _activeRagdollTimer += Time.deltaTime;
                 else
                     DeactivateRagdoll();
             }
@@ -37,8 +36,8 @@ namespace _Project.Scripts.CodeBase.Characters
         {
             if (transform.GetComponentInChildren<Weapon>())
             {
-                weaponObject = transform.GetComponentInChildren<Weapon>().transform;
-                weaponObject.gameObject.layer = LayerMask.NameToLayer("PlayerCharacter");
+                _weaponObject = transform.GetComponentInChildren<Weapon>().transform;
+                _weaponObject.gameObject.layer = LayerMask.NameToLayer("PlayerCharacter");
             }
        
             Rigidbody[] temp = transform.GetComponentsInChildren<Rigidbody>();
@@ -68,10 +67,10 @@ namespace _Project.Scripts.CodeBase.Characters
                     }
                 }
 
-                if (weaponObject)
+                if (_weaponObject)
                 {
-                    weaponObject.gameObject.GetComponent<Collider>().enabled = false;
-                    weaponObject.gameObject.layer = LayerMask.NameToLayer("Weapon");
+                    _weaponObject.gameObject.GetComponent<Collider>().enabled = false;
+                    _weaponObject.gameObject.layer = LayerMask.NameToLayer("Weapon");
                 }
             }
         }
@@ -87,13 +86,13 @@ namespace _Project.Scripts.CodeBase.Characters
 
                 }
             }
-            active = false;
-            activeRagdollTimer = 0.0f;
+            _active = false;
+            _activeRagdollTimer = 0.0f;
         }
 
         public void ActivateRagdoll()
         {
-            active = true;
+            _active = true;
             if (GetComponent<Animator>())
                 GetComponent<Animator>().enabled = false;
             foreach (GameObject GO in ragdollBones)
@@ -105,17 +104,17 @@ namespace _Project.Scripts.CodeBase.Characters
                 
                 }
             }
-            if (weaponObject)
+            if (_weaponObject)
             {
-                weaponObject.SetParent(null);
-                weaponObject.gameObject.AddComponent<Rigidbody>();
-                weaponObject.gameObject.GetComponent<Collider>().enabled = true;
+                _weaponObject.SetParent(null);
+                _weaponObject.gameObject.AddComponent<Rigidbody>();
+                _weaponObject.gameObject.GetComponent<Collider>().enabled = true;
             }
           
         }
         public void SetForceToRagdoll(Vector3 position, Vector3 force, Transform target)
         {
-            if (!active)
+            if (!_active)
                 ActivateRagdoll();
 
             GameObject targetBone = ragdollBones[0];
@@ -143,10 +142,10 @@ namespace _Project.Scripts.CodeBase.Characters
 
             targetBone.GetComponent<Rigidbody>().AddForceAtPosition(force, position,ForceMode.Impulse);
 
-            if (weaponObject)
+            if (_weaponObject)
             {    //weaponObject.GetComponent<Rigidbody>().AddExplosionForce(1.0f, position, 1.0f);
-                weaponObject.GetComponent<Rigidbody>().AddForceAtPosition(force * 0.1f, position, ForceMode.Impulse);
-                weaponObject.gameObject.AddComponent<DestroyTimer>();
+                _weaponObject.GetComponent<Rigidbody>().AddForceAtPosition(force * 0.1f, position, ForceMode.Impulse);
+                _weaponObject.gameObject.AddComponent<DestroyTimer>();
             }
         }
 

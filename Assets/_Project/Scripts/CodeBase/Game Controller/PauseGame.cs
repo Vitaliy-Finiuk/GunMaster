@@ -1,7 +1,7 @@
-﻿using _Project.Scripts.CodeBase.UI;
+﻿using CodeBase.UI;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Game_Controller
+namespace CodeBase.Game_Controller
 {
 	public class PauseGame : MonoBehaviour {
 
@@ -9,11 +9,10 @@ namespace _Project.Scripts.CodeBase.Game_Controller
 
 		public UIController UIController;
 
-		void Awake() {
-			GameController.pauseGame = this;
-		}
+		private void Awake() => 
+			GameController.PauseGame = this;
 
-		void Update() {
+		private void Update() {
 			if (Input.GetButtonDown("Use"))
 				TogglePause();
 		}

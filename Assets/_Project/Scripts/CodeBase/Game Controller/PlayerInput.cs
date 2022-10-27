@@ -1,25 +1,17 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.Game_Controller
+namespace CodeBase.Game_Controller
 {
 	public class PlayerInput : MonoBehaviour{
 
 		public static PlayerInput Instance { get; private set; }
 
-		public static float Horizontal;
-		public static float Vertical;
-		public static float MouseX;
-		public static float MouseY;
-		public static bool Jump;
-		public static bool Sprint;
-
 		public static bool Fire1;
 
-		void Awake() {
+		private void Awake() => 
 			Instance = this;
-		}
 
-		void Update() {
+		private void Update() {
 			ReadCharacterInput();
 			ReadWeaponInput();
 		}
@@ -27,21 +19,16 @@ namespace _Project.Scripts.CodeBase.Game_Controller
 		private void ReadCharacterInput() {
 		}
 
-		private void ReadWeaponInput() {
-		
+		private void ReadWeaponInput() => 
 			Fire1 = Input.GetButton("Fire");
-		}
 
-		public static void Enable() {
+		public static void Enable() => 
 			Instance.enabled = true;
-		}
 
-		public static void Disable() {
+		public static void Disable() => 
 			Instance.enabled = false;
-		}
 
-		public static void SetEnabled(bool enabled) {
+		public static void SetEnabled(bool enabled) => 
 			Instance.enabled = enabled;
-		}
 	}
 }

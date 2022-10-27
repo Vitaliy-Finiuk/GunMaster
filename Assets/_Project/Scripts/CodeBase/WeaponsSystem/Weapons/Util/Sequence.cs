@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Util
+namespace CodeBase.WeaponsSystem.Weapons.Util
 {
 	[Serializable]
 	public class Sequence<T> : IEnumerator<T> {

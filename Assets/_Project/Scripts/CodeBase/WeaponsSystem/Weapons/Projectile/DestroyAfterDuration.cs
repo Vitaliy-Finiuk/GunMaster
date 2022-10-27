@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile
+namespace CodeBase.WeaponsSystem.Weapons.Projectile
 {
 	[RequireComponent(typeof(ParticleSystem))]
 	public class DestroyAfterDuration : MonoBehaviour {
@@ -9,11 +9,11 @@ namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile
 
 		private ParticleSystem _system;
 
-		void Awake() {
+		private void Awake() {
 			_system = GetComponent<ParticleSystem>();
 		}
 
-		void Start() {
+		private void Start() {
 			_lifeTime = 0;
 		}
 

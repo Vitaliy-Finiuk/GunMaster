@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using _Project.Scripts.CodeBase.Characters.AI;
-using _Project.Scripts.CodeBase.Characters.Player;
+using CodeBase.Characters.AI;
+using CodeBase.Characters.Player;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem
+namespace CodeBase.WeaponsSystem
 {
     public class Weapon : MonoBehaviour {
 

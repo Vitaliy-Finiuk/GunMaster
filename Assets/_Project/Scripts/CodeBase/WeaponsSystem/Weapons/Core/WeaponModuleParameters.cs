@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core
+namespace CodeBase.WeaponsSystem.Weapons.Core
 {
 	[Serializable]
 	public class WeaponModuleParameters {

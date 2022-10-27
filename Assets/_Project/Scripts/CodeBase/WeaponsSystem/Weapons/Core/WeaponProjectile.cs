@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile;
+using CodeBase.WeaponsSystem.Weapons.Projectile;
 using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core
+namespace CodeBase.WeaponsSystem.Weapons.Core
 {
 	[RequireComponent(typeof(Rigidbody))]
 	public class WeaponProjectile : ProjectileModifier {

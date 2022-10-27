@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem
+namespace CodeBase.WeaponsSystem
 {
     public class WeaponNodeHelper : MonoBehaviour {
 

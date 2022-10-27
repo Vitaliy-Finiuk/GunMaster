@@ -1,8 +1,8 @@
-﻿using _Project.Scripts.CodeBase.UI.Weapon_GUI;
+﻿using CodeBase.UI.Weapon_GUI;
 using UnityEngine;
-using WeaponSet = _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Core.WeaponSet;
+using WeaponSet = CodeBase.WeaponsSystem.Weapons.Core.WeaponSet;
 
-namespace _Project.Scripts.CodeBase.Game_Controller
+namespace CodeBase.Game_Controller
 {
 	public class GameController : MonoBehaviour {
 
@@ -18,17 +18,14 @@ namespace _Project.Scripts.CodeBase.Game_Controller
 		public static GameController Instance { get; private set; }
 
 		public static WeaponSet WeaponSet;
-		public static PauseGame pauseGame;
-		//public static CursorController cursorController;
+		public static PauseGame PauseGame;
 		public static WeaponGUI weaponGUI;
 
-		public static void AddSectionStatic() {
+		public static void AddSectionStatic() => 
 			Instance.AddSection();
-		}
 
-		public static void RemoveSectionStatic() {
+		public static void RemoveSectionStatic() => 
 			Instance.RemoveSection();
-		}
 
 		public void AddSection() {
 			WeaponSet.AddSection();

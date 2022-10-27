@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.CodeBase.WeaponsSystem
+namespace CodeBase.WeaponsSystem
 {
     [CreateAssetMenu(fileName = "Data", menuName = "WeaponData/WeaponList", order = 1)]
     public class WeaponList : ScriptableObject

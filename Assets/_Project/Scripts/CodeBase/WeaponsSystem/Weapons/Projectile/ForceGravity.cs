@@ -1,4 +1,4 @@
-﻿namespace _Project.Scripts.CodeBase.WeaponsSystem.Weapons.Projectile
+﻿namespace CodeBase.WeaponsSystem.Weapons.Projectile
 {
 	public class ForceGravity : ProjectileModifier {
 
