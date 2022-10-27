@@ -28,6 +28,7 @@ public class PrWeapon : MonoBehaviour {
     public float tempModFactor = 0.0f;
     public float BulletSize = 1.0f;
 
+
     public float BulletSpeed = 1.0f;
     public float BulletAccel = 0.0f;
 
@@ -39,14 +40,10 @@ public class PrWeapon : MonoBehaviour {
     [HideInInspector]
     public int ActualClips = 0;
 
-    public float ReloadTime = 1.0f;
-    public bool playReloadAnim = true;
-    private float ActualReloadTime = 0.0f;
+
 
     public float bulletTimeToLive = 3.0f;
 
-    [HideInInspector]
-    public bool Reloading = false;
 
     public float FireRate = 0.1f;
     public float AccDiv = 0.0f;
@@ -55,10 +52,7 @@ public class PrWeapon : MonoBehaviour {
 
     public float shootingNoise = 25f;
 
-    [Header("Quick Reload")]
-    public bool useQuickReload = true;
-    public Vector2 HUDquickReloadTimes = new Vector2(0.5f, 0.7f);
-    private bool quickReloadActive = false;
+
 
     [Header("References & VFX")]
     public float shootShakeFactor = 2.0f;
@@ -66,17 +60,12 @@ public class PrWeapon : MonoBehaviour {
     public GameObject BulletPrefab;
     public GameObject ShootFXFLash;
     public Light ShootFXLight;
-    public Renderer LaserSight;
     private PrTopDownCamera playerCamera;
 
     [Header("Laser Weapon Settings")]
     public GameObject laserBeamPrefab;
     private GameObject[] actualBeams;
-    public float laserWidthFactor = 1.0f;
-    public float laserLiveTime = 1.0f;
-    public float warmingTime = 0.2f;
-    public bool generatesBloodDamage = true;
-    public GameObject warmingVFX;
+
     private GameObject actualWarmingVFX;
     public GameObject laserHitVFX;
     private GameObject[] actualLaserHits;
@@ -88,7 +77,6 @@ public class PrWeapon : MonoBehaviour {
 
     [Header("Sound FX")]
     public AudioClip[] ShootSFX;
-    public AudioClip ReloadSFX;
     public AudioClip ShootEmptySFX;
     [HideInInspector]
     public AudioSource Audio;
@@ -99,28 +87,6 @@ public class PrWeapon : MonoBehaviour {
 
     private Vector3 EnemyTargetAuto = Vector3.zero;
     private Vector3 FinalTarget = Vector3.zero;
-
-    //HUD
-    [Header("HUD")]
-    [HideInInspector]
-    public bool updateHUD = true;
-
-    public Sprite WeaponPicture;
-    [HideInInspector]
-    public GameObject HUDWeaponPicture;
-    [HideInInspector]
-    //public GameObject HUDWeaponName;
-    //[HideInInspector]
-    public GameObject HUDWeaponBullets;
-    [HideInInspector]
-    public GameObject HUDWeaponBulletsBar;
-    [HideInInspector]
-    public GameObject HUDWeaponClips;
-    [HideInInspector]
-    public GameObject HUDquickRelaodMarker;
-    [HideInInspector]
-    public GameObject HUDquickRelaodZone;
-
 
     //Object Pooling Manager
     public bool usePooling = true;
@@ -133,9 +99,6 @@ public class PrWeapon : MonoBehaviour {
     public bool AIWeapon = false;
     [HideInInspector]
     public Transform AIEnemyTarget;
-
-    [HideInInspector]
-    public bool turretWeapon = false;
 
     [HideInInspector]
     public int team = 0;
@@ -153,14 +116,6 @@ public class PrWeapon : MonoBehaviour {
         Audio = transform.parent.GetComponent<AudioSource>();
 
        
-        if (!AIWeapon)
-        {
-            HUDWeaponBullets.GetComponent<Text>().text = (ActualBullets / BulletsPerShoot).ToString();
-            HUDWeaponClips.GetComponent<Text>().text = ActualClips.ToString();
-            HUDWeaponBulletsBar.GetComponent<Image>().fillAmount = (1.0f / Bullets) * ActualBullets;
-            HUDWeaponBulletsBar.GetComponent<RectTransform>().localScale = Vector3.one;
-
-        }
 
         //Basic Object Pooling Initialization ONLY FOR RANGED WEAPONS
         if (Type == WT.Rifle || Type == WT.Pistol || Type == WT.Minigun || Type == WT.RocketLauncher)
@@ -198,7 +153,6 @@ public class PrWeapon : MonoBehaviour {
                 actualBeams[i].SetActive(false);
                 actualBeams[i].name = WeaponName + "_Beam_" + i.ToString();
                 actualBeams[i].transform.parent = BulletsParent.transform;
-                actualBeams[i].GetComponent<PrWeaponLaserBeam>().InitializeLine(laserWidthFactor, ShootFXPos);
 
                 actualLaserHits[i] = Instantiate(laserHitVFX, ShootFXPos.position, ShootFXPos.rotation) as GameObject;
                 actualLaserHits[i].SetActive(false);
@@ -206,22 +160,9 @@ public class PrWeapon : MonoBehaviour {
                 actualLaserHits[i].transform.parent = BulletsParent.transform;
             }
 
-            if (turretWeapon)
-            {
-                ShootTarget = new GameObject("ShootTarget").transform;
-                ShootTarget.SetParent(transform);
-            }
-
 
         }
-        else if (Type == WT.Melee)
-        {
-            //Melee Weapon Initialization
-            /*
-            HUDWeaponBullets.GetComponent<Text>().text = "";
-            HUDWeaponClips.GetComponent<Text>().text = "";
-            HUDWeaponBulletsBar.GetComponent<RectTransform>().localScale = Vector3.zero;*/
-        }
+
 
         if (ShootFXFLash)
         {
@@ -237,45 +178,9 @@ public class PrWeapon : MonoBehaviour {
         }
         
 
-        if (useQuickReload)
-        {
-            if (HUDquickReloadTimes[0] < 0.0f)
-                HUDquickReloadTimes[0] = 0.0f;
-            else if (HUDquickReloadTimes[0] >= 1.0f)
-                HUDquickReloadTimes[0] = 0.98f;
-
-            if (HUDquickReloadTimes[1] < 0.0f)
-                HUDquickReloadTimes[1] = 0.1f;
-            else if (HUDquickReloadTimes[1] >= 1.0f)
-                HUDquickReloadTimes[1] = 0.99f;
-        }
     }
 
-    // Update is called once per frame
-    void Update() {
-
-        if (Reloading)
-        {
-            ActualReloadTime += Time.deltaTime;
-
-            if (!AIWeapon && !turretWeapon && useQuickReload)
-            {
-                HUDquickRelaodMarker.GetComponent<RectTransform>().localPosition = new Vector3(ActualReloadTime * (46.0f / ReloadTime), 0, 0);
-
-                if (ActualReloadTime >= (HUDquickReloadTimes[0] * ReloadTime) && ActualReloadTime <= (HUDquickReloadTimes[1] * ReloadTime))
-                    quickReloadActive = true;
-                else
-                    quickReloadActive = false;
-            }
-
-            if (ActualReloadTime >= ReloadTime)
-            {
-                PositiveReload();
-            }
-        }
-
-
-    }
+   
 
     private void OnDestroy()
     {
@@ -283,116 +188,10 @@ public class PrWeapon : MonoBehaviour {
             Destroy(BulletsParent);
     }
 
-    void PositiveReload()
-    {
-        Reloading = false;
-        ActualReloadTime = 0.0f;
-        SendMessageUpwards("EndReload", SendMessageOptions.DontRequireReceiver);
 
-        WeaponEndReload();
-    }
 
-    public void SetupQuickReload()
-    {
-        HUDquickRelaodZone.GetComponent<RectTransform>().localPosition = new Vector3(HUDquickReloadTimes[0] * 46.0f, 0, 0);
-        HUDquickRelaodZone.GetComponent<RectTransform>().localScale = new Vector3(HUDquickReloadTimes[1] - HUDquickReloadTimes[0], 1, 1);
-    }
 
-    public void TryQuickReload()
-    {
-        if (quickReloadActive)
-        {
-            PositiveReload();
-            quickReloadActive = false;
-        }
-            
-    }
 
-    public void TurnOffLaser()
-    {
-        LaserSight.enabled = false;
-    }
-
-    void LateUpdate()
-    {
-        if (!AIWeapon)
-        {
-            LaserSight.transform.position = ShootFXPos.position;
-            LaserSight.transform.LookAt(ShootTarget.position, Vector3.up);
-        }
-    }
-
-    void WeaponEndReload()
-    {
-        ActualBullets = Bullets;
-        UpdateWeaponGUI();
-        
-    }
-
-    void UpdateWeaponGUI()
-    {
-        if (!AIWeapon && Type != WT.Melee && updateHUD)
-        {
-            HUDWeaponBullets.GetComponent<Text>().text = (ActualBullets / BulletsPerShoot).ToString();
-            HUDWeaponClips.GetComponent<Text>().text = ActualClips.ToString();
-            HUDWeaponBulletsBar.GetComponent<Image>().fillAmount =(1.0f / Bullets) * ActualBullets;
-            //Debug.Log("Bullets = " + Bullets);
-            //HUDWeaponBulletsBar.GetComponent<RectTransform>().localScale = new Vector3((1.0f / Bullets) * ActualBullets, 1.0f, 1.0f);
-
-        }
-    }
-
-    public void UpdateWeaponGUI(GameObject weapPic)
-    {
-        if (!AIWeapon && Type != WT.Melee)
-        {
-            HUDWeaponBullets.GetComponent<Text>().text = (ActualBullets / BulletsPerShoot).ToString();
-            HUDWeaponClips.GetComponent<Text>().text = ActualClips.ToString();
-            HUDWeaponBulletsBar.GetComponent<Image>().fillAmount = (1.0f / Bullets) * ActualBullets;
-            //HUDWeaponBulletsBar.GetComponent<RectTransform>().localScale = new Vector3((1.0f / Bullets) * ActualBullets, 1.0f, 1.0f);
-            HUDWeaponPicture = weapPic;
-            if (HUDWeaponPicture.GetComponentInChildren<Text>())
-                HUDWeaponPicture.GetComponentInChildren<Text>().text = WeaponName;
-        }
-    }
-
-    public void CancelReload()
-    {
-        Reloading = false;
-        if (playReloadAnim)
-            Player.GetComponent<Animator>().SetBool("Reloading", false);
-        SendMessageUpwards("EndReload", SendMessageOptions.DontRequireReceiver);
-        ActualReloadTime = 0.0f;
-    }
-
-	public void Reload()
-	{
-		if (ActualClips > 0 || Clips == -1)
-		{
-            
-            if (!AIWeapon || !turretWeapon)
-            {
-                if (useQuickReload)
-                    SendMessageUpwards("QuickReloadActive", true, SendMessageOptions.DontRequireReceiver);
-                ActualClips -= 1;
-            }
-            
-            if (playReloadAnim && !turretWeapon && !AIWeapon)
-                Player.GetComponent<Animator>().SetBool("Reloading", true);
-            Reloading = true;
-            Audio.PlayOneShot(ReloadSFX);
-            ActualReloadTime = 0.0f;
-           
-        }
-	}
-
-    public void AIReload()
-    {
-        SendMessageUpwards("StartReload", SendMessageOptions.DontRequireReceiver);
-        Reloading = true;
-        Audio.PlayOneShot(ReloadSFX);
-        ActualReloadTime = 0.0f;
-    }
 
     void AutoAim()
     {
@@ -475,7 +274,7 @@ public class PrWeapon : MonoBehaviour {
 
     public void Shoot()
 	{
-        if (AIWeapon || turretWeapon)
+        if (AIWeapon)
         {
             AIAutoAim();
         }
@@ -515,7 +314,7 @@ public class PrWeapon : MonoBehaviour {
                 finalAngle += angleStep;
             }
 
-            if (Type != WT.Laser && BulletPrefab && ShootFXPos && !Reloading)
+            if (Type != WT.Laser && BulletPrefab && ShootFXPos )
             {
                 if (ActualBullets > 0)
                 {
@@ -568,14 +367,12 @@ public class PrWeapon : MonoBehaviour {
                             playerCamera.Shake(shootShakeFactor * 0.5f, 0.2f);
                     }
 
-                    if (ActualBullets == 0)
-                        Reload();
 
                 }
 
             }
             // Laser Shoot
-            else if (Type == WT.Laser && actualBeams.Length != 0 && ShootFXPos && !Reloading)
+            else if (Type == WT.Laser && actualBeams.Length != 0 && ShootFXPos )
             {
                 bool useDefaultImpactFX = true;
                 
@@ -593,7 +390,6 @@ public class PrWeapon : MonoBehaviour {
                     Beam.transform.rotation = ShootFXPos.rotation;
                     Beam.SetActive(true);
                     
-                    Beam.GetComponent<PrWeaponLaserBeam>().Activate(laserLiveTime);
                     //Shoot Beam
                     RaycastHit hit;
 
@@ -628,13 +424,10 @@ public class PrWeapon : MonoBehaviour {
                             playerCamera.Shake(shootShakeFactor * 0.5f, 0.2f);
                     }
 
-                    if (ActualBullets == 0)
-                        Reload();
-
+               
                 }
             }
 
-            UpdateWeaponGUI();
 
             EnemyTargetAuto = Vector3.zero;
 
@@ -669,15 +462,4 @@ public class PrWeapon : MonoBehaviour {
     }
 
 
-
-
-    void OnDrawGizmos()
-    {
-        /*
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(FinalTarget, 0.25f);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(ShootFXPos.position, 0.2f);*/
-
-    }
 }

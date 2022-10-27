@@ -3,15 +3,7 @@ using System.Collections;
 
 public class PrLookToCamera : MonoBehaviour {
 
-    //private Transform CameraTarget;
-
-	// Use this for initialization
-	void Start () {
-        
-
-    }
-	
-	// Update is called once per frame
+ 
 	void Update () {
         //transform.LookAt(Camera.main.transform);
         if (Camera.main != null)

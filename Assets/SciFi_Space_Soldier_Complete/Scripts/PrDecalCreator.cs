@@ -29,9 +29,4 @@ public class PrDecalCreator : MonoBehaviour {
         }
             
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

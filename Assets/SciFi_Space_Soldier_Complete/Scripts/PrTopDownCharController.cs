@@ -60,14 +60,8 @@ public class PrTopDownCharController : MonoBehaviour {
     private bool m_Jump;
     private float lastJump = 0.0f;
     private bool b_canJump = true;
-    [HideInInspector] public bool Jumping = false;
     [HideInInspector] public bool Sprinting = false;
-    [HideInInspector] public bool Rolling = false;
 
-    public float RollStaminaUse = 0.5f;
-
-    public enum EAction { Jump, Roll }
-    public EAction evadeAction = EAction.Jump;
 
     [HideInInspector] public bool m_isDead = false;
     [HideInInspector] public bool m_CanMove = true;
@@ -90,12 +84,10 @@ public class PrTopDownCharController : MonoBehaviour {
     [Header("Mobile Joysctick")]
     [SerializeField] private Joystick _joystick;
     
-    [Header("VFX")]
-    public GameObject RollVFX;
+   
 
     private PrTopDownCharInventory Inventory;
 
-    public List<GameObject> friends;
 
     void Start()
     {
@@ -139,21 +131,8 @@ public class PrTopDownCharController : MonoBehaviour {
         else
             ActivateJoystick(false);
 
-        friends = new List<GameObject>(GameObject.FindGameObjectsWithTag("AIPlayer"));
-        if (friends.Count != 0)
-        {
-            foreach (GameObject f in friends)
-            {
-                f.GetComponent<PrEnemyAI>().FindPlayers();
-            }
-        }
 
-        //Start PlayerInfo to Load and Save player Info across levels
-        /*if (GameObject.Find("playerInfo_" + playerNmb))
-        {
-            Debug.Log("Player Info Found");
-            LoadPlayerInfo();
-        }*/
+
     }
 
     public void StopMoving(string Case)
@@ -230,29 +209,11 @@ public class PrTopDownCharController : MonoBehaviour {
 
             
 
-            //Jump
-            if (Input.GetButton(playerCtrlMap[10]) &&!Rolling && !m_Jump && !Inventory.UsingObject && !crouch && Time.time >= lastJump + 0.2f && m_IsGrounded && b_canJump)
-            {
-                
-                if (evadeAction == EAction.Jump && !charAnimator.GetCurrentAnimatorStateInfo(0).IsName("JumpEnd"))
-                {
-
-                    lastJump = Time.time;
-                    Rolling = true;
-                    m_Jump = true;
-                    Inventory.Weapon[Inventory.ActiveWeapon].GetComponent<PrWeapon>().LaserSight.enabled = false;
-                    Inventory.Weapon[Inventory.ActiveWeapon].GetComponent<PrWeapon>().CancelReload();
-                    charAnimator.SetTrigger("Jump");
-                    if (RollVFX)
-                        Instantiate(RollVFX, transform.position, Quaternion.identity);
-                       
-                }
-            }
 
 
             if (b_CanRotate)
             {
-                if (Inventory.Aiming && !Rolling)
+                if (Inventory.Aiming )
                 {
                     if (!JoystickEnabled)
                         MouseAim(AimFinalPos.position);
@@ -276,38 +237,6 @@ public class PrTopDownCharController : MonoBehaviour {
             Move(m_Move, crouch, m_Jump);
 			m_Jump = false;
 
-            //Sprint
-            if (Input.GetButton(playerCtrlMap[7]) && !Rolling && m_Move.magnitude >= 0.2f && !Inventory.UsingObject && !crouch)
-            {
-                
-               
-
-                    Sprinting = true;
-                    if (Inventory.alwaysAim)
-                    {
-                        Inventory.Aiming = false;
-                        charAnimator.SetBool("Aiming", false);
-                    }
-                
-                else
-                {
-                    Sprinting = false;
-                    if (Inventory.alwaysAim)
-                    {
-                        Inventory.Aiming = true;
-                        charAnimator.SetBool("Aiming", true);
-                    }
-                }
-            }
-            else
-            {
-                Sprinting = false;
-                if (Inventory.alwaysAim)
-                {
-                    Inventory.Aiming = true;
-                    charAnimator.SetBool("Aiming", true);
-                }
-            }
 
             
         }
@@ -327,9 +256,7 @@ public class PrTopDownCharController : MonoBehaviour {
         {
             Direction = Quaternion.Euler(0, 0 + m_Cam.transform.parent.transform.eulerAngles.y, 0) * Direction;
 
-            if (!Rolling)
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Direction), Time.deltaTime * (RunRotationSpeed * 0.1f));
-            else
+
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(Direction), Time.deltaTime * RunRotationSpeed);
 
             transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
@@ -405,15 +332,7 @@ public class PrTopDownCharController : MonoBehaviour {
             m_TurnAmount = move.x;
             m_ForwardAmount = move.z;
 
-            // control and velocity handling is different when grounded and airborne:
-            if (m_IsGrounded)
-            {
-                HandleGroundedMovement(crouch, jump);
-            }
-            else
-            {
-                HandleAirborneMovement();
-            }
+       
 
             ScaleCapsuleForCrouching(crouch);
             PreventStandingInLowHeadroom();
@@ -483,7 +402,7 @@ public class PrTopDownCharController : MonoBehaviour {
 		if (m_IsGrounded && move.magnitude > 0)
 		{
             
-            if (Inventory.Aiming && !Rolling)
+            if (Inventory.Aiming )
             {
                 move *= PlayerAimSpeed;
                 transform.Translate(move * Time.deltaTime);
@@ -501,8 +420,7 @@ public class PrTopDownCharController : MonoBehaviour {
                     charAnimator.applyRootMotion = true;
                 else
                 {
-                    if (!Rolling)
-                    {
+     
                         if (Sprinting)
                         {
                             move *= PlayerSprintSpeed;
@@ -518,7 +436,7 @@ public class PrTopDownCharController : MonoBehaviour {
 
                         transform.Translate(move * Time.deltaTime );
                         charAnimator.applyRootMotion = false;
-                    }
+                    
                     
                 }
             }
@@ -543,25 +461,7 @@ public class PrTopDownCharController : MonoBehaviour {
 	}
 	
 	
-	void HandleGroundedMovement(bool crouch, bool jump)
-	{
-		// check whether conditions are right to allow a jump:
-        
-		if (jump && !crouch )
-		{
-            if (charAnimator.GetCurrentAnimatorStateInfo(0).IsName("Grounded") || charAnimator.GetCurrentAnimatorStateInfo(0).IsName("Grounded_Unarmed") || charAnimator.GetCurrentAnimatorStateInfo(0).IsName("Aiming") 
-                || charAnimator.GetCurrentAnimatorStateInfo(0).IsName("Grounded_Armed_Crouch") || charAnimator.GetCurrentAnimatorStateInfo(0).IsName("Grounded_Unarmed_Crouch"))
-            {
-                // jump!
-                //Debug.Log("-------------------JUMP---------------------");
-                m_Rigidbody.velocity = new Vector3(m_Rigidbody.velocity.x, m_JumpPower, m_Rigidbody.velocity.z);
-                m_IsGrounded = false;
-                charAnimator.applyRootMotion = false;
-                m_GroundCheckDistance = 0.025f;
-            }
-                
-		}
-	}
+
 		
 	//This function it´s used only for Aiming and Jumping states. Those anims doesn´t have root motion so we move the player by script
 	public void OnAnimatorMove()
@@ -581,12 +481,7 @@ public class PrTopDownCharController : MonoBehaviour {
 	void CheckGroundStatus()
 	{
 		RaycastHit hitInfo;
-		#if UNITY_EDITOR
-		// helper to visualise the ground check ray in the scene view
-		//Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * m_GroundCheckDistance));
-		#endif
-		// 0.1f is a small offset to start the ray from inside the character
-		// it is also good to note that the transform position in the sample assets is at the base of the character
+
 		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance))
 		{
 			m_IsGrounded = true;

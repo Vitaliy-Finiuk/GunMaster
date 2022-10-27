@@ -704,7 +704,6 @@ public class PrEnemyAI : MonoBehaviour
             weapon.Player = this.gameObject;
             weapon.team = team;
             weapon.AIWeapon = true;
-            weapon.LaserSight.enabled = false;
             if (weapon.Type == PrWeapon.WT.Melee)
             {
                 weapon.MeleeRadius = attackDistance;
@@ -1273,26 +1272,14 @@ public class PrEnemyAI : MonoBehaviour
                 weapon.AIEnemyTarget = playerTransform;
 
             weapon.Shoot();
-            if (weapon.Reloading == false)
-            {
+ 
                 if (weapon.ActualBullets > 0)
                     enemyAnimator.SetTrigger("Shoot");
-                else
-                {
-                    weapon.Reload();
-                }
-                    
-            }
+               
         }
        
     }
     
-    /*
-    public void EndReload()
-    {
-        //canAttack = true;
-        enemyAnimator.SetBool("Reloading", false);
-    }*/
 
     void UseMeleeWeapon()
     {
