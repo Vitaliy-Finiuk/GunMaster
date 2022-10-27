@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Rigidbody))]
 public class WeaponProjectile : ProjectileModifier {
 
-	public Weapon Weapon { get; set; }
+	public WeaponSet WeaponSet { get; set; }
 	public WeaponModuleParameters Parameters { get; private set; }
 	public WeaponSection NextSection { get; set; }
 

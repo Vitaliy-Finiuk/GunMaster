@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PrBullet : MonoBehaviour {
+public class Bullet : MonoBehaviour {
 
     public bool isGrenade = false;
     public float explodeTimer = 5.0f;
@@ -53,13 +53,10 @@ public class PrBullet : MonoBehaviour {
 
     private PrTopDownCamera playerCamera;
 
-    // Use this for initialization
-    void Start()
+    private void Start()
     {
-        if (UsePhysicsToTranslate && !isGrenade)
-        {
+        if (UsePhysicsToTranslate && !isGrenade) 
             GetComponent<Rigidbody>().AddForce(Vector3.forward * BulletSpeed * 10);
-        }
 
         if (GameObject.Find("PlayerCamera"))
             playerCamera = GameObject.Find("PlayerCamera").GetComponent<PrTopDownCamera>();
@@ -114,14 +111,11 @@ public class PrBullet : MonoBehaviour {
                 GO.GetComponent<PrDestroyTimer>().enabled = false;
             }
         }
-        if (GetComponentInChildren<TrailRenderer>())
-        {
+        if (GetComponentInChildren<TrailRenderer>()) 
             GetComponentInChildren<TrailRenderer>().Clear();
-        }
     }
 
-	// Update is called once per frame
-	void Update () {
+    private void Update () {
         
         if (!UsePhysicsToTranslate)
         {
@@ -164,7 +158,7 @@ public class PrBullet : MonoBehaviour {
     }
 
 
-    void DestroyGrenade(Vector3 HitNormal, Vector3 HitPos, Transform HitTransform)
+    private void DestroyGrenade(Vector3 HitNormal, Vector3 HitPos, Transform HitTransform)
     {
         DestroyImmediate(GetComponent<Rigidbody>());
         DestroyImmediate(GetComponent<Collider>());
@@ -260,7 +254,7 @@ public class PrBullet : MonoBehaviour {
     }
 
 
-    void DestroyBullet(Vector3 HitNormal, Vector3 HitPos, Transform HitTransform, GameObject Target, string HitTag)
+    private void DestroyBullet(Vector3 HitNormal, Vector3 HitPos, Transform HitTransform, GameObject Target, string HitTag)
 	{
         alreadyDestroyed = true;
 
@@ -418,9 +412,9 @@ public class PrBullet : MonoBehaviour {
         else
             Destroy(this.gameObject); 
     }
-    
-	
-	void OnCollisionEnter(Collision collision)
+
+
+    private void OnCollisionEnter(Collision collision)
 	{
         
 		if (UsePhysicsCollisions)

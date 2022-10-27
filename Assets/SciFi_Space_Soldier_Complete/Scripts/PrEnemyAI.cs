@@ -194,7 +194,7 @@ public class PrEnemyAI : MonoBehaviour
     public Mesh AreaMesh;
     public Mesh TargetArrow;
 
-    private PrCharacterIK CharacterIKController;
+    private CharacterIK CharacterIKController;
     private Transform ArmIKTarget;
 
     // Use this for initialization
@@ -255,7 +255,7 @@ public class PrEnemyAI : MonoBehaviour
             enemyAnimator.applyRootMotion = false;
 
         //ragdoll Initialization
-        gameObject.AddComponent<PrCharacterRagdoll>();
+        gameObject.AddComponent<CharacterRagdoll>();
 
         if (useExplosiveDeath && explosiveDeathVFX)
         {
@@ -609,11 +609,11 @@ public class PrEnemyAI : MonoBehaviour
         Destroy(GetComponent<UnityEngine.AI.NavMeshAgent>());
         if (useRagdollDeath)
         {
-            GetComponent<PrCharacterRagdoll>().ActivateRagdoll();
+            GetComponent<CharacterRagdoll>().ActivateRagdoll();
             ragdollForce = ((transform.position + new Vector3(0, 1.5f, 0)) - (LastHitPos + new Vector3(0f, 1.6f, 0f))) * (ragdollForceFactor * Random.Range(0.8f, 1.2f));
             
             if (!temperatureDeath)
-                GetComponent<PrCharacterRagdoll>().SetForceToRagdoll(LastHitPos + new Vector3(0f, 1.6f, 0f), ragdollForce, BurnAndFrozenVFXParent);
+                GetComponent<CharacterRagdoll>().SetForceToRagdoll(LastHitPos + new Vector3(0f, 1.6f, 0f), ragdollForce, BurnAndFrozenVFXParent);
         }
 
         if (explosiveDeath && actualExplosiveDeathVFX)
@@ -720,14 +720,14 @@ public class PrEnemyAI : MonoBehaviour
                 if (weapon.gameObject.transform.Find("ArmIK"))
                 {
                     ArmIKTarget = weapon.gameObject.transform.Find("ArmIK");
-                    if (GetComponent<PrCharacterIK>() == null)
+                    if (GetComponent<CharacterIK>() == null)
                     {
-                        gameObject.AddComponent<PrCharacterIK>();
-                        CharacterIKController = GetComponent<PrCharacterIK>();
+                        gameObject.AddComponent<CharacterIK>();
+                        CharacterIKController = GetComponent<CharacterIK>();
                     }
-                    else if (GetComponent<PrCharacterIK>())
+                    else if (GetComponent<CharacterIK>())
                     {
-                        CharacterIKController = GetComponent<PrCharacterIK>();
+                        CharacterIKController = GetComponent<CharacterIK>();
                     }
 
                     if (CharacterIKController)

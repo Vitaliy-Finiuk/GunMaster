@@ -132,9 +132,9 @@ public class PrWeapon : MonoBehaviour {
                     GameBullets[i].name = WeaponName + "_Bullet_" + i.ToString();
                     GameBullets[i].transform.parent = BulletsParent.transform;
 
-                    GameBullets[i].GetComponent<PrBullet>().team = team;
-                    GameBullets[i].GetComponent<PrBullet>().usePooling = true;
-                    GameBullets[i].GetComponent<PrBullet>().InitializePooling();
+                    GameBullets[i].GetComponent<Bullet>().team = team;
+                    GameBullets[i].GetComponent<Bullet>().usePooling = true;
+                    GameBullets[i].GetComponent<Bullet>().InitializePooling();
                 }
             }
             
@@ -324,8 +324,8 @@ public class PrWeapon : MonoBehaviour {
                         Bullet.transform.rotation = ShootFXPos.rotation;
                         Bullet.GetComponent<Rigidbody>().isKinematic = false;
                         Bullet.GetComponent<Collider>().enabled = true;
-                        Bullet.GetComponent<PrBullet>().timeToLive = bulletTimeToLive;
-                        Bullet.GetComponent<PrBullet>().ResetPooling();
+                        Bullet.GetComponent<Bullet>().timeToLive = bulletTimeToLive;
+                        Bullet.GetComponent<Bullet>().ResetPooling();
                         Bullet.SetActive(true);
                         ActualGameBullet += 1;
                         if (ActualGameBullet >= GameBullets.Length)
@@ -334,11 +334,11 @@ public class PrWeapon : MonoBehaviour {
                     else
                     {
                         Bullet = Instantiate(BulletPrefab, ShootFXPos.position, ShootFXPos.rotation);
-                        Bullet.GetComponent<PrBullet>().usePooling = false;
+                        Bullet.GetComponent<Bullet>().usePooling = false;
                         Bullet.SetActive(true);
                         Bullet.GetComponent<Rigidbody>().isKinematic = false;
                         Bullet.GetComponent<Collider>().enabled = true;
-                        Bullet.GetComponent<PrBullet>().timeToLive = bulletTimeToLive;
+                        Bullet.GetComponent<Bullet>().timeToLive = bulletTimeToLive;
                     }
                         
 
@@ -347,12 +347,12 @@ public class PrWeapon : MonoBehaviour {
                     EmitParticles(Muzzle);
 
                     //Generic 
-                    Bullet.GetComponent<PrBullet>().Damage = BulletDamage;
-                    Bullet.GetComponent<PrBullet>().temperatureMod = tempModFactor;
-                    Bullet.GetComponent<PrBullet>().BulletSpeed = BulletSpeed;
-                    Bullet.GetComponent<PrBullet>().BulletAccel = BulletAccel;
+                    Bullet.GetComponent<Bullet>().Damage = BulletDamage;
+                    Bullet.GetComponent<Bullet>().temperatureMod = tempModFactor;
+                    Bullet.GetComponent<Bullet>().BulletSpeed = BulletSpeed;
+                    Bullet.GetComponent<Bullet>().BulletAccel = BulletAccel;
                     if (usePooling)
-                        Bullet.transform.localScale = Bullet.GetComponent<PrBullet>().OriginalScale * BulletSize;
+                        Bullet.transform.localScale = Bullet.GetComponent<Bullet>().OriginalScale * BulletSize;
 
                     ActualBullets -= 1;
 

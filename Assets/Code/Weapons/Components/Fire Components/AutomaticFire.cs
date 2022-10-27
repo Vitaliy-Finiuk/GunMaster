@@ -30,7 +30,7 @@ public class AutomaticFire : FireComponent {
 		float fireDelay = 1f / fireRate;
 		List<WeaponProjectile> projectiles = new List<WeaponProjectile>();
 		while (_timeForNextShoot <= 0) {
-			Transform firePoint = Module.WeaponSection.Weapon.GetFirePoint();
+			Transform firePoint = Module.WeaponSection.WeaponSet.GetFirePoint();
 			projectiles.Add(Module.FireProjectile(firePoint .position, firePoint .rotation, fireParameters, - _timeForNextShoot));
 			_timeForNextShoot += fireDelay;
 		}

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [Serializable]
 public class TransformSequence : Sequence<Transform> { }
 
-public class Weapon : MonoBehaviour
+public class WeaponSet : MonoBehaviour
 {
 
 	public PrTopDownCharInventory CharController;
@@ -20,7 +20,7 @@ public class Weapon : MonoBehaviour
 
 	private Transform _moduleParent;
 
-	void Awake() {
+	private void Awake() {
 		_transform = transform;
 
 		Projectiles = new List<WeaponProjectile>();
@@ -36,13 +36,11 @@ public class Weapon : MonoBehaviour
 		}
 	}
 
-	private void Start() {
+	private void Start() => 
 		firePoints.MoveNext();
-	}
 
-	void Update() {
+	private void Update() => 
 		ReadInput();
-	}
 
 	private void ReadInput() {
 		if (PlayerInput.Fire1 & CharController.Aiming)
@@ -78,7 +76,7 @@ public class Weapon : MonoBehaviour
 			return;
 
 		Projectiles.Add(projectile);
-		projectile.Weapon = this;
+		projectile.WeaponSet = this;
 	}
 
 	public Transform GetFirePoint() {

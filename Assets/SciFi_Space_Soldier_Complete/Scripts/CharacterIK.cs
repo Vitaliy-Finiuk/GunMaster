@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class PrCharacterIK : MonoBehaviour
+public class CharacterIK : MonoBehaviour
 {
     protected Animator animator;
 

@@ -17,7 +17,7 @@ public class WeaponGUI : MonoBehaviour {
 	}
 
 	public void Refresh() {
-		if (GameController.weapon == null || GameController.weapon.sections[0].Weapon == null)
+		if (GameController.WeaponSet == null || GameController.WeaponSet.sections[0].WeaponSet == null)
 			return;
 
 		if (_sectionGUIs != null) {
@@ -25,9 +25,9 @@ public class WeaponGUI : MonoBehaviour {
 				Destroy(section.gameObject);
 		}
 
-		_sectionGUIs = new Transform[GameController.weapon.SectionCount];
-		for (int i = 0; i < GameController.weapon.SectionCount; i++) {
-			CreateSectionGUI(GameController.weapon.sections[i], i);
+		_sectionGUIs = new Transform[GameController.WeaponSet.SectionCount];
+		for (int i = 0; i < GameController.WeaponSet.SectionCount; i++) {
+			CreateSectionGUI(GameController.WeaponSet.sections[i], i);
 		}
 	}
 

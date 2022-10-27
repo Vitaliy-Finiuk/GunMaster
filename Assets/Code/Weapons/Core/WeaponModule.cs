@@ -29,12 +29,12 @@ public class WeaponModule : MonoBehaviour {
 	public void PressFire() {
 		if (IsPressed) {
 			TimePressed += Time.deltaTime;
-			WeaponSection.Weapon.RegisterProjectile(_fireComponent.OnHoldFire());
+			WeaponSection.WeaponSet.RegisterProjectile(_fireComponent.OnHoldFire());
 		}
 		else {
 			IsPressed = true;
 			TimePressed = 0;
-			WeaponSection.Weapon.RegisterProjectile(_fireComponent.OnPressFire());
+			WeaponSection.WeaponSet.RegisterProjectile(_fireComponent.OnPressFire());
 		}
 	}
 
@@ -44,7 +44,7 @@ public class WeaponModule : MonoBehaviour {
 
 		IsPressed = false;
 		TimePressed = 0;
-		WeaponSection.Weapon.RegisterProjectile(_fireComponent.OnReleaseFire());
+		WeaponSection.WeaponSet.RegisterProjectile(_fireComponent.OnReleaseFire());
 	}
 
 	public WeaponProjectile FireProjectile(Vector3 position, Quaternion rotation, WeaponModuleParameters parameters, float elapsedTime = 0f) {
@@ -61,6 +61,6 @@ public class WeaponModule : MonoBehaviour {
 	}
 
 	public void StartTransition(WeaponProjectile projectile) {
-		WeaponSection.Weapon.RegisterProjectile(_transitionComponent.OnTransition(projectile));
+		WeaponSection.WeaponSet.RegisterProjectile(_transitionComponent.OnTransition(projectile));
 	}
 }

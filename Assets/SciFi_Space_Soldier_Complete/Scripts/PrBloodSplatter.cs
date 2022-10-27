@@ -10,14 +10,11 @@ public class PrBloodSplatter : MonoBehaviour {
 
     public int splatNumber = 5;
     private ParticleSystem particles;
-	// Use this for initialization
-	void Start () {
+    private void Start () {
         particles = GetComponentInChildren<ParticleSystem>();
         
-        //////Fix for 2017.2 BUG //////
         particles.Emit(1);
         particles.Clear();
-        ////// End of Fix //////
 
         rayDir = new GameObject("rayDir").transform;
         rayDir.position = transform.position + (transform.up * 1.5f);
@@ -32,13 +29,9 @@ public class PrBloodSplatter : MonoBehaviour {
         rayTarget.parent = rayDir;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-       
-    }
 
-    void RandomRotation()
+
+    private void RandomRotation()
     {
 
         float randomRot = Random.Range(directionRandom, -directionRandom);
@@ -52,7 +45,7 @@ public class PrBloodSplatter : MonoBehaviour {
 
     public void Splat()
     {
-        for (int i = 0; i < splatNumber; i++)
+        for (var i = 0; i < splatNumber; i++)
         {
             RandomRotation();
 
@@ -82,7 +75,7 @@ public class PrBloodSplatter : MonoBehaviour {
         }
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         if (rayDir && rayTarget)
         {

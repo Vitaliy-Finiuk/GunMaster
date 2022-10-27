@@ -70,7 +70,7 @@ public class PrTopDownCharInventory : MonoBehaviour
     //ArmIK
     private Transform ArmIKTarget = null;
 
-    private PrCharacterIK CharacterIKController;
+    private CharacterIK CharacterIKController;
 
 
     private void Start()
@@ -169,13 +169,11 @@ public class PrTopDownCharInventory : MonoBehaviour
         foreach (PrWeapon Weap in InitialWeapons)
         {
             int weapInt = 0;
-            //Debug.Log("Weapon to instance = " + Weap);
 
             foreach (GameObject weap in WeaponList)
             {
                 if (Weap.gameObject.name == weap.name)
                 {
-                    //Debug.Log("Weapon to pickup = " + weap + " " + weapInt);
                     actualWeaponTypes[weapType] = weapInt;
                     PickupWeapon(weapInt);
                 }
@@ -402,7 +400,6 @@ public class PrTopDownCharInventory : MonoBehaviour
         {
             if (Weapon[i] == null)
             {
-                //Debug.Log(i + " " + NewWeapon.name);
 
                 Weapon[i] = NewWeapon;
                 replaceWeapon = false;
@@ -414,7 +411,6 @@ public class PrTopDownCharInventory : MonoBehaviour
 
         if (replaceWeapon)
         {
-            //Debug.Log("Replacing weapon" + Weapon[ActiveWeapon].name + " using " + NewWeapon.name);
             DestroyImmediate(Weapon[ActiveWeapon]);
             Weapon[ActiveWeapon] = NewWeapon;
         }
@@ -440,14 +436,14 @@ public class PrTopDownCharInventory : MonoBehaviour
             if (ActualW.gameObject.transform.Find("ArmIK"))
             {
                 ArmIKTarget = ActualW.gameObject.transform.Find("ArmIK");
-                if (GetComponent<PrCharacterIK>() == null)
+                if (GetComponent<CharacterIK>() == null)
                 {
-                    gameObject.AddComponent<PrCharacterIK>();
-                    CharacterIKController = GetComponent<PrCharacterIK>();
+                    gameObject.AddComponent<CharacterIK>();
+                    CharacterIKController = GetComponent<CharacterIK>();
                 }
-                else if (GetComponent<PrCharacterIK>())
+                else if (GetComponent<CharacterIK>())
                 {
-                    CharacterIKController = GetComponent<PrCharacterIK>();
+                    CharacterIKController = GetComponent<CharacterIK>();
                 }
 
                 if (CharacterIKController)
@@ -466,15 +462,7 @@ public class PrTopDownCharInventory : MonoBehaviour
 
         ActualW.Audio = WeaponR.GetComponent<AudioSource>();
 
-        if (ActualW.Type == global::PrWeapon.WT.Pistol)
-        {
-            int PistolLayer = charAnimator.GetLayerIndex("PistolLyr");
-            charAnimator.SetLayerWeight(PistolLayer, 1.0f);
-            int PistolActLayer = charAnimator.GetLayerIndex("PistolActions");
-            charAnimator.SetLayerWeight(PistolActLayer, 1.0f);
-            charAnimator.SetBool("Armed", true);
-        }
-        else if (ActualW.Type == global::PrWeapon.WT.Rifle)
+         if (ActualW.Type == global::PrWeapon.WT.Rifle)
         {
             int PistolLayer = charAnimator.GetLayerIndex("PistolLyr");
             charAnimator.SetLayerWeight(PistolLayer, 0.0f);
@@ -518,7 +506,6 @@ public class PrTopDownCharInventory : MonoBehaviour
     public void SetHealth(int HealthInt)
     {
         ActualHealth = HealthInt;
-        //Debug.Log(ActualHealth);
 
         if (ActualHealth > 1)
             HUDHealthBar.GetComponent<RectTransform>().localScale =
@@ -532,7 +519,6 @@ public class PrTopDownCharInventory : MonoBehaviour
     {
         if (ActualHealth > 0)
         {
-            //Here you can put some Damage Behaviour if you want
             SetHealth(ActualHealth - Damage);
 
             Damaged = true;
@@ -562,7 +548,6 @@ public class PrTopDownCharInventory : MonoBehaviour
 
         charController.m_isDead = true;
 
-        //Set invisible to Bullets
         GetComponent<Rigidbody>().isKinematic = true;
         GetComponent<Collider>().enabled = false;
 
@@ -572,7 +557,6 @@ public class PrTopDownCharInventory : MonoBehaviour
         DestroyHUD();
 
 
-        //Send Message to Game script to notify Dead
         SendMessageUpwards("PlayerDied", charController.playerNmb, SendMessageOptions.DontRequireReceiver);
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject i in enemies)
@@ -585,7 +569,6 @@ public class PrTopDownCharInventory : MonoBehaviour
 
         Destroy(charController);
         Destroy(GetComponent<Collider>());
-        //Destroy(this);
     }
 
     public void DestroyHUD()

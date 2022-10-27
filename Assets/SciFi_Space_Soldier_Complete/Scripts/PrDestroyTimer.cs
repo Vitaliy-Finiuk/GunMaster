@@ -16,24 +16,7 @@ public class PrDestroyTimer : MonoBehaviour {
     public bool Fade = false;
     public Renderer FadeMaterial;
     public AnimationCurve FadeCurve;
-    /*
-    public bool UseDecalSystem = false;
-    public Decal DecalObject;
-    public Material DecalMaterial;*/
 
-	// Use this for initialization
-	void Start () {
-        if (UseObjectPooling && DestroyFX)
-        {
-            ActualDestroyFX = Instantiate(DestroyFX, DestroyFXPos.position, Quaternion.identity) as GameObject;
-            ActualDestroyFX.SetActive(false);
-        }
-	  /*  if (UseDecalSystem && DecalObject)
-        {
-            DecalObject.material = DecalMaterial;
-            DecalObject.GetBounds();
-        }*/
-	}
 	
 	// Update is called once per frame
 	void Update () {
