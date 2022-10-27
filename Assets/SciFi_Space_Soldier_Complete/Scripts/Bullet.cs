@@ -51,7 +51,7 @@ public class Bullet : MonoBehaviour {
 
     private bool alreadyDestroyed = false;
 
-    private PrTopDownCamera playerCamera;
+    private TopDownCamera playerCamera;
 
     private void Start()
     {
@@ -59,7 +59,7 @@ public class Bullet : MonoBehaviour {
             GetComponent<Rigidbody>().AddForce(Vector3.forward * BulletSpeed * 10);
 
         if (GameObject.Find("PlayerCamera"))
-            playerCamera = GameObject.Find("PlayerCamera").GetComponent<PrTopDownCamera>();
+            playerCamera = GameObject.Find("PlayerCamera").GetComponent<TopDownCamera>();
 
     }
 
@@ -80,9 +80,9 @@ public class Bullet : MonoBehaviour {
                 i = i + 1;
 
                 //Object Pooling System
-                GO.AddComponent<PrDestroyTimer>();
-                GO.GetComponent<PrDestroyTimer>().UseObjectPooling = true;
-                GO.GetComponent<PrDestroyTimer>().enabled = false;
+                GO.AddComponent<DestroyTimer>();
+                GO.GetComponent<DestroyTimer>().UseObjectPooling = true;
+                GO.GetComponent<DestroyTimer>().enabled = false;
             }
 
             
@@ -108,7 +108,7 @@ public class Bullet : MonoBehaviour {
                 GO.transform.localScale = DetachableScales[i];
                 i = i + 1;
       
-                GO.GetComponent<PrDestroyTimer>().enabled = false;
+                GO.GetComponent<DestroyTimer>().enabled = false;
             }
         }
         if (GetComponentInChildren<TrailRenderer>()) 
@@ -169,11 +169,11 @@ public class Bullet : MonoBehaviour {
 
            if (col.CompareTag("Player"))
             {
-                if (col.GetComponent<PrTopDownCharInventory>())
+                if (col.GetComponent<TopDownCharSettings>())
                 {
                     if (!friendlyFire)
                     {
-                        if (col.GetComponent<PrTopDownCharInventory>())
+                        if (col.GetComponent<TopDownCharSettings>())
                         {
                             if (col.GetComponent<Rigidbody>())
                             {
@@ -199,7 +199,7 @@ public class Bullet : MonoBehaviour {
                     
                 }
             }
-            else if (col.CompareTag("AIPlayer") && col.GetComponent<PrEnemyAI>().team != team)
+            else if (col.CompareTag("AIPlayer") && col.GetComponent<EnemyAI>().team != team)
             {
                 if (col.GetComponent<Rigidbody>())
                 {
@@ -212,7 +212,7 @@ public class Bullet : MonoBehaviour {
             }
 
 
-            else if (col.CompareTag("Enemy") && col.GetComponent<PrEnemyAI>().team != team)
+            else if (col.CompareTag("Enemy") && col.GetComponent<EnemyAI>().team != team)
             {
                 if (col.GetComponent<Rigidbody>())
                 {
@@ -245,8 +245,8 @@ public class Bullet : MonoBehaviour {
             foreach (GameObject GO in DetachOnDie)
             {
                 GO.transform.parent = null;
-                GO.AddComponent<PrDestroyTimer>();
-                GO.GetComponent<PrDestroyTimer>().DestroyTime = 10f;
+                GO.AddComponent<DestroyTimer>();
+                GO.GetComponent<DestroyTimer>().DestroyTime = 10f;
             }
         }
 
@@ -270,9 +270,9 @@ public class Bullet : MonoBehaviour {
                 if (generatesBloodDamage)
                 {
                     Target.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
-                    if (Target.GetComponent<PrTopDownCharInventory>().DamageFX != null)
+                    if (Target.GetComponent<TopDownCharSettings>().DamageFX != null)
                     {
-                        Instantiate(Target.GetComponent<PrTopDownCharInventory>().DamageFX, HitPos, Quaternion.LookRotation(HitNormal));
+                        Instantiate(Target.GetComponent<TopDownCharSettings>().DamageFX, HitPos, Quaternion.LookRotation(HitNormal));
                         UseDefaultImpactFX = false;
                     }
                 }
@@ -282,7 +282,7 @@ public class Bullet : MonoBehaviour {
                 
   
             }
-            else if (HitTag == "AIPlayer" && Target.GetComponent<PrEnemyAI>().team != team)
+            else if (HitTag == "AIPlayer" && Target.GetComponent<EnemyAI>().team != team)
             {
                 
                 // Debug.Log("Bullet team = " + team + " Target Team = " + Target.GetComponent<PrEnemyAI>().team);
@@ -292,9 +292,9 @@ public class Bullet : MonoBehaviour {
                 if (generatesBloodDamage)
                 {
                     Target.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
-                    if (Target.GetComponent<PrEnemyAI>().damageVFX != null)
+                    if (Target.GetComponent<EnemyAI>().damageVFX != null)
                     {
-                        Instantiate(Target.GetComponent<PrEnemyAI>().damageVFX, HitPos, Quaternion.LookRotation(HitNormal));
+                        Instantiate(Target.GetComponent<EnemyAI>().damageVFX, HitPos, Quaternion.LookRotation(HitNormal));
                         UseDefaultImpactFX = false;
                     }
                 }
@@ -305,7 +305,7 @@ public class Bullet : MonoBehaviour {
                 
                 
             }
-            else if (HitTag == "Enemy" && Target.GetComponent<PrEnemyAI>().team != team)
+            else if (HitTag == "Enemy" && Target.GetComponent<EnemyAI>().team != team)
             {
                 // Debug.Log("Bullet team = " + team + " Target Team = " + Target.GetComponent<PrEnemyAI>().team);
                 Target.SendMessage("PlayerTeam", team, SendMessageOptions.DontRequireReceiver);
@@ -314,9 +314,9 @@ public class Bullet : MonoBehaviour {
                 if (generatesBloodDamage)
                 {
                     Target.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
-                    if (Target.GetComponent<PrEnemyAI>().damageVFX != null)
+                    if (Target.GetComponent<EnemyAI>().damageVFX != null)
                     {
-                        Instantiate(Target.GetComponent<PrEnemyAI>().damageVFX, HitPos, Quaternion.LookRotation(HitNormal));
+                        Instantiate(Target.GetComponent<EnemyAI>().damageVFX, HitPos, Quaternion.LookRotation(HitNormal));
                         UseDefaultImpactFX = false;
                     }
                 }
@@ -354,7 +354,7 @@ public class Bullet : MonoBehaviour {
                     col.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
                     
                 }
-                else if (col.CompareTag("AIPlayer") && col.GetComponent<PrEnemyAI>().team != team)
+                else if (col.CompareTag("AIPlayer") && col.GetComponent<EnemyAI>().team != team)
                 {
                     if (col.GetComponent<Rigidbody>())
                     {
@@ -365,7 +365,7 @@ public class Bullet : MonoBehaviour {
                     col.SendMessage("ApplyTempMod", temperatureMod, SendMessageOptions.DontRequireReceiver);
                     col.SendMessage("ApplyDamage", Damage, SendMessageOptions.DontRequireReceiver);
                 }
-                else if (col.CompareTag("Enemy") && col.GetComponent<PrEnemyAI>().team != team)
+                else if (col.CompareTag("Enemy") && col.GetComponent<EnemyAI>().team != team)
                 {
                     if (col.GetComponent<Rigidbody>())
                     {
@@ -401,8 +401,8 @@ public class Bullet : MonoBehaviour {
                 GO.transform.parent = this.transform.parent;
 
                 //Object Pooling System
-                GO.GetComponent<PrDestroyTimer>().enabled = true;
-                GO.GetComponent<PrDestroyTimer>().DestroyTime = 10f;
+                GO.GetComponent<DestroyTimer>().enabled = true;
+                GO.GetComponent<DestroyTimer>().DestroyTime = 10f;
             }
         }
 

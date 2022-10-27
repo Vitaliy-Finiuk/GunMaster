@@ -32,9 +32,9 @@ public class CharacterRagdoll : MonoBehaviour {
 
     public void InitializeRagdoll()
     {
-        if (transform.GetComponentInChildren<PrWeapon>())
+        if (transform.GetComponentInChildren<Weapon>())
         {
-            weaponObject = transform.GetComponentInChildren<PrWeapon>().transform;
+            weaponObject = transform.GetComponentInChildren<Weapon>().transform;
             weaponObject.gameObject.layer = LayerMask.NameToLayer("PlayerCharacter");
         }
        
@@ -143,7 +143,7 @@ public class CharacterRagdoll : MonoBehaviour {
         if (weaponObject)
         {    //weaponObject.GetComponent<Rigidbody>().AddExplosionForce(1.0f, position, 1.0f);
             weaponObject.GetComponent<Rigidbody>().AddForceAtPosition(force * 0.1f, position, ForceMode.Impulse);
-            weaponObject.gameObject.AddComponent<PrDestroyTimer>();
+            weaponObject.gameObject.AddComponent<DestroyTimer>();
         }
     }
 

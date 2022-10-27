@@ -8,7 +8,7 @@ public class TransformSequence : Sequence<Transform> { }
 public class WeaponSet : MonoBehaviour
 {
 
-	public PrTopDownCharInventory CharController;
+	public TopDownCharSettings CharController;
 	public int SectionCount { get { return sections.Count; } }
 	public List<WeaponProjectile> Projectiles { get; private set; }
 	public Transform ModuleParent { get { return CreateModuleParent(); } }
